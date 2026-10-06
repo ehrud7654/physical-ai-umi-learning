@@ -1,0 +1,24 @@
+# ResNet18-from-scratch UMI diffusion policy sized for an 8 GB laptop GPU (RTX 4070 Laptop).
+# Entries are passed verbatim as Hydra overrides onto train_diffusion_unet_timm_umi_workspace.
+policy_frequency_hz: 10          # obs_down_sample_steps = round(native_hz / this)
+hydra_overrides:
+  - policy.obs_encoder.model_name=resnet18
+  - policy.obs_encoder.pretrained=false          # no network download; scratch baseline
+  - policy.obs_encoder.feature_aggregation=avg
+  - policy.down_dims=[128,256,512]
+  - dataloader.batch_size=4
+  - dataloader.num_workers=0
+  - dataloader.persistent_workers=false
+  - val_dataloader.batch_size=4
+  - val_dataloader.num_workers=0
+  - val_dataloader.persistent_workers=false
+  - training.gradient_accumulate_every=4          # effective batch 16
+  - training.num_epochs=120
+  - training.lr_warmup_steps=100
+  - training.checkpoint_every=1
+  - training.sample_every=5
+  - checkpoint.topk.k=3                           # train_loss top-k is only a candidate pool
+  - logging.mode=disabled
+  - task.dataset.val_ratio=0.15                   # episode-level split, seed fixed
+  - task.dataset.action_padding=true              # keep end-of-demo observations as samples
+  - +task.dataset.val_start_pose_noise_scale=0.0  # requires patch 0002; deterministic validation

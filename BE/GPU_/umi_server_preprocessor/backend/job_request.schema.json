@@ -1,0 +1,35 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:umi:umi:orbslam-job:0.2.0",
+  "title": "UMI shared-Atlas ORB-SLAM job",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["job_id", "demonstration_session_ids"],
+  "properties": {
+    "job_id": {"type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]{0,63}$"},
+    "dataset_name": {"type": "string", "default": "dataset"},
+    "calibration_profile": {"type": "string", "default": "s22_20260921"},
+    "require_mapping": {"const": true},
+    "mapping_session_id": {"type": "string", "minLength": 1},
+    "demonstration_session_ids": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {"type": "string", "minLength": 1}
+    },
+    "external_atlas_path": {"type": "string", "minLength": 1},
+    "external_alignment_path": {"type": "string", "minLength": 1},
+    "external_atlas_sha256": {"type": "string", "pattern": "^[0-9a-fA-F]{64}$"},
+    "external_alignment_sha256": {"type": "string", "pattern": "^[0-9a-fA-F]{64}$"}
+  },
+  "oneOf": [
+    {
+      "required": ["mapping_session_id"],
+      "not": {"anyOf": [{"required": ["external_atlas_path"]}, {"required": ["external_alignment_path"]}]}
+    },
+    {
+      "required": ["external_atlas_path", "external_alignment_path", "external_atlas_sha256", "external_alignment_sha256"],
+      "not": {"required": ["mapping_session_id"]}
+    }
+  ]
+}

@@ -1,0 +1,37 @@
+{
+  "schema_version": 1,
+  "status": "validated_repeatable",
+  "source_session": "rec_1789458154143_c3328203",
+  "source_result": "data/calibration/kalibr_c3328203/results/s22_c3328203-camchain-imucam.yaml",
+  "image_orientation_contract": "upright_v1",
+  "convention": "T_cam_imu maps IMU coordinates into the saved camera frame",
+  "timestamp_convention": "t_imu = t_cam + timeshift_cam_imu_s",
+  "T_cam_imu": [
+    [0.008786134438888983, 0.9998668300196402, 0.013752311372894597, -0.01679923682675385],
+    [0.9999435367880353, -0.008702939698883872, -0.0060977107534078735, -0.04650441450047782],
+    [-0.005977213184788027, 0.01380511017967145, -0.9998868395250885, 0.0052758631246932475],
+    [0.0, 0.0, 0.0, 1.0]
+  ],
+  "timeshift_cam_imu_s": 0.015113562286557497,
+  "camera": {
+    "model": "pinhole",
+    "distortion_model": "radtan",
+    "intrinsics_960x540": [386.783698207, 388.105698794, 473.576277752, 272.084056994],
+    "distortion_coeffs": [0.0125279049159, -0.00376646144958, -0.000443263076207, 0.000485273184501],
+    "resolution": [960, 540]
+  },
+  "validation": {
+    "repeat_session": "rec_1789448027906_f7bece77",
+    "rotation_delta_deg": 0.197068634,
+    "translation_delta_norm_mm": 3.727524114,
+    "timeshift_delta_ms": 0.309508674,
+    "reprojection_mean_px": 0.138290697,
+    "reprojection_median_px": 0.119473409,
+    "gyroscope_residual_mean_rad_s": 0.002175984,
+    "accelerometer_residual_mean_m_s2": 0.021104837
+  },
+  "limitations": [
+    "IMU noise density and random walk remain provisional until stationary Allan analysis",
+    "Convert the transform convention explicitly when generating an ORB-SLAM3 Tbc setting"
+  ]
+}

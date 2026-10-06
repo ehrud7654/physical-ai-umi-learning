@@ -1,0 +1,37 @@
+{
+  "calibration_id": "umi-s22-marker-midpoint-canonical-side-grasp-20260914-provisional",
+  "status": "provisional_marker_midpoint_video_semantics_checked_axes",
+  "reason": "The real recording shows a horizontal body-side approach: the upright case grows in the unchanged camera view while the two gripper markers stay on its left and right. Across validation episodes the dominant start-to-closure displacement is v8 +Y, not v8 +Z. Rotate the v8 child frame by Rx(-90 deg) so canonical +X remains the jaw axis, +Y is up, and +Z is the horizontal fingertip/approach axis.",
+  "t_cam_to_pinch_axes": "+X right, +Y up, -Z forward (ARCore/OpenGL)",
+  "child_frame": "canonical_pinch_marker_midpoint_side_grasp",
+  "child_axes": "+X jaw opening, +Y up, +Z toward the upright object's body during horizontal side approach",
+  "t_cam_to_pinch": [
+    [1.0, 0.0, 0.0, -0.0014],
+    [0.0, -0.9659258262890683, -0.25881904510252074, 0.0401],
+    [0.0, 0.25881904510252074, -0.9659258262890683, -0.1497],
+    [0.0, 0.0, 0.0, 1.0]
+  ],
+  "source": {
+    "calibration_id": "umi-s22-marker-midpoint-canonical-pinch-gravity-20260914-provisional",
+    "child_frame": "canonical_pinch_marker_midpoint",
+    "basis_change": "T_camera_side_pinch = T_camera_v8_pinch @ Rx(-90deg)",
+    "t_v8_pinch_to_side_pinch_rotation": [
+      [1.0, 0.0, 0.0],
+      [0.0, 0.0, 1.0],
+      [0.0, -1.0, 0.0]
+    ]
+  },
+  "evidence": {
+    "translation": "video marker midpoint, 5149 detected frames",
+    "gravity": "new child +Y equals the gravity-checked world-up direction",
+    "motion": "in the v8 validation trajectories, start-to-near-closure translation has median [x,y,z]=[-0.2,123.3,4.1] mm; after this basis change the median becomes [-0.2,-4.1,123.3] mm, so forward motion is canonical +Z",
+    "visual": "unchanged S22 frames show the upright case growing while the two markers approach its left/right body sides",
+    "limitations": [
+      "marker midpoint to physical pad-centre offset is unmeasured",
+      "the exact first-contact frame is not labelled",
+      "robot-base/workspace registration is still provisional",
+      "must not be used for real motor commands",
+      "valid only for the 2026-09-11 physical mounting"
+    ]
+  }
+}

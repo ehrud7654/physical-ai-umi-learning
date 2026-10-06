@@ -1,0 +1,13 @@
+workspace_branch=umi
+workspace_commit=1bed4ea1b
+bundle_created_date=2026-09-23
+bundle_revision=v3_loaded_atlas_per_episode_local_mapping
+orbslam_source=Stanford/UMI ORB-SLAM3 fork
+orbslam_source_commit=b741dca39015330ef4bcc3a85f89493503ade04b
+verified_binary_path=/opt/umi-slam/source/Examples/Monocular-Inertial/gopro_slam
+verified_binary_sha256=9ac6980e99221b8255b7b9cf1f6d274bd0fd74e746a6033c4ef8dc822218d6cb
+vocabulary_path=/opt/umi-slam/source/Vocabulary/ORBvoc.txt
+marker_dictionary=DICT_4X4_50
+marker_id=13
+marker_black_square_size_m=0.16
+notes=The WSL source copy at /opt/umi-slam/source was not itself a Git checkout; source commit provenance comes from the transferred builder documentation.

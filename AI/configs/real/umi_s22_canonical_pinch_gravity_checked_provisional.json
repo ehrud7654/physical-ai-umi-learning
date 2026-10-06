@@ -1,0 +1,36 @@
+{
+  "calibration_id": "umi-s22-marker-midpoint-canonical-pinch-gravity-20260914-provisional",
+  "status": "provisional_marker_midpoint_gravity_checked_axes",
+  "reason": "Across 70 near-closed recording frames the supplied child +Z points opposite gravity (median 1.46 degrees from world up). The policy canonical +Z must point toward the fingertips/down, so Y and Z are flipped by a proper 180-degree rotation about the preserved +X jaw axis.",
+  "t_cam_to_pinch_axes": "+X right, +Y up, -Z forward (ARCore/OpenGL)",
+  "child_frame": "canonical_pinch_marker_midpoint",
+  "child_axes": "+X jaw opening, +Z toward fingertips, +Y completes the right-handed frame",
+  "t_cam_to_pinch": [
+    [1.0, 0.0, 0.0, -0.0014],
+    [0.0, -0.25881904510252074, 0.9659258262890683, 0.0401],
+    [0.0, -0.9659258262890683, -0.25881904510252074, -0.1497],
+    [0.0, 0.0, 0.0, 1.0]
+  ],
+  "source": {
+    "calibration_id": "umi-s22-marker-midpoint-video-20260912-provisional",
+    "child_frame": "supplied_gripper_marker_midpoint",
+    "basis_change": "T_camera_canonical_pinch = T_camera_supplied_hand @ Rx(pi)",
+    "t_supplied_hand_canonical_pinch_rotation": [
+      [1.0, 0.0, 0.0],
+      [0.0, -1.0, 0.0],
+      [0.0, 0.0, -1.0]
+    ]
+  },
+  "evidence": {
+    "translation": "video marker midpoint, 5149 detected frames",
+    "axis_check": "70/70 near-closed episodes; supplied +Z angle to world up median 1.46 degrees and p95 1.07 degrees when expressed as deviation from 180 degrees to down",
+    "physical_sanity_check": "camera is 77.5 mm behind canonical +Z (above a top-down pinch), whereas the unconverted supplied frame places it 77.5 mm below the pinch",
+    "limitations": [
+      "marker midpoint to pad-centre offset is unmeasured",
+      "roll is not independently measured",
+      "gravity fixes the vertical sign but does not replace a measured robot-base/workspace calibration",
+      "must not be used for real motor commands until HW confirms the canonical child-frame convention",
+      "valid only for the 2026-09-11 physical mounting"
+    ]
+  }
+}

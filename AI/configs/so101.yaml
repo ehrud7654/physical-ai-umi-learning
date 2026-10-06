@@ -1,0 +1,226 @@
+# SO-101 하드웨어 의존 값 — 단일 출처(single source of truth)
+#
+# 출처: AI/Simulation_mujoco/SO101/so101_new_calib.xml (공식 MJCF, onshape-to-robot 생성)
+#       joint range 를 정본으로 사용한다. actuator ctrlrange 는 5자리로 반올림돼 있어
+#       joint range 와 최대 ~3e-6 rad 차이가 난다. ctrlrange 를 인용하지 말 것.
+# 확인일: 2026-08-27  확인자: AI 학습 담당자(트랙 B)  방법: MJCF 직접 파싱
+#
+# ⚠️ 로봇팔은 변형 예정. 값이 바뀌면 이 파일만 고친다. 코드에 하드코딩 금지.
+
+robot:
+  name: so101
+  calibration: new_calib        # 관절 중앙 = 0
+  # 실물 J1~J5 calibration zero 및 direction=+1 확인 (HW, 2026-09-09).
+  # 실물 J3 하한은 encoder-safe -pi/2이며 configs/real/so101_ver1.json에서
+  # 더 좁게 적용한다. 이 파일은 공식 MuJoCo 모델의 -1.69를 유지한다.
+  dof: 6                        # 5 관절 + 그리퍼
+  mjcf: Simulation_mujoco/SO101/so101_new_calib.xml
+
+# 관절 순서 = state/action 벡터의 인덱스 순서. 이 순서를 바꾸면 데이터가 무효가 된다.
+joints:
+  - name: shoulder_pan
+    index: 0
+    range_rad: [-1.9198621771937616, 1.9198621771937634]
+  - name: shoulder_lift
+    index: 1
+    range_rad: [-1.7453292519943224, 1.7453292519943366]
+  - name: elbow_flex
+    index: 2
+    range_rad: [-1.69, 1.69]
+  - name: wrist_flex
+    index: 3
+    range_rad: [-1.6580628494556928, 1.6580627293335335]
+  - name: wrist_roll
+    index: 4
+    range_rad: [-2.7438472969992493, 2.841206309382605]
+  - name: gripper
+    index: 5
+    range_rad: [-0.17453297762778586, 1.7453291995659765]   # 하한 = 닫힘
+
+# 정규화 규칙 — 데이터 계약(project-task)의 일부. 양 트랙 공용.
+# J1~J5는 rad 범위, 6번째 채널은 전체 접촉면 gap 0~0.09m를 각각 [-1,1]로 매핑한다.
+normalization:
+  rule: linear_to_unit_range
+  arm_formula: "x_norm = 2 * (x_rad - lo) / (hi - lo) - 1"
+  arm_inverse: "x_rad = (x_norm + 1) / 2 * (hi - lo) + lo"
+  gripper_formula: "gap_norm = 2 * gap_m / 0.09 - 1"
+  gripper_inverse: "gap_m = (gap_norm + 1) * 0.045"
+  output_range: [-1.0, 1.0]
+  gripper_closed_norm: -1.0
+
+actuator:
+  type: position
+  forcerange_nm: [-3.35, 3.35]
+  # ⚠️ MJCF 주석: 이 kp/kv 는 LeRobot 서보 게인의 1:1 매핑이 아니다.
+  #    서보 비례게인 16 가정하에 계산된 값. Sim2Real 시 재계측 대상.
+  kp: 998.22
+  kv: 2.731
+
+# 카메라 — 공식 MJCF 에는 카메라가 하나도 없다. 전부 우리가 추가한 것.
+# ⚠️ 배치는 잠정값. 데이터 포맷은 양 트랙 접점이므로 트랙 A 확인 필요.
+cameras:
+  # 오프스크린 렌더 멀티샘플링(MSAA) 표본 수. MuJoCo 기본값 4.
+  # ⚠️ 실측 2026-09-03 🟢: EGL 에서 같은 상태를 두 번 렌더하면 최대 1계조가 다르고,
+  #    그 1계조가 롤아웃 성공/실패를 뒤집었다 (L37·L39). MSAA 는 GPU 오프스크린
+  #    렌더의 대표적 비결정 원인이다. 0 이면 끈다 — 가설이며 check_determinism 으로 확인한다.
+  #    이 값을 바꾸면 렌더 통계가 바뀌므로 **수집·평가가 같은 값**을 써야 하고,
+  #    바꾼 뒤에는 기존 체크포인트와의 수치 비교가 유효하지 않다.
+  offsamples: 0
+  resolution: [224, 224]        # 데이터 규격 image (3,224,224)
+  count: 1
+  cam_wrist:
+    kind: attached
+    parent_body: gripper        # 공식 MJCF 의 body 이름
+    # gripper 로컬축 실측: local -z = 손가락 방향, local +x = 월드 위쪽, TCP = local (-0.0079,0,-0.0981)
+    # 그리퍼 메시 hull(중심 local(-0.0098,0,-0.0282), rbound 0.0843) 바깥으로 빼야 한다.
+    # 안쪽에 두면 렌더 화면이 노란 메시로 꽉 찬다 — 실측으로 확인됨.
+    # 2026-09-11 S22 UMI의 **수평 몸통 측면 파지** 시점을 재현한 평가용 프록시.
+    # T_gripper_camera = T_gripper_pinch @ inverse(T_camera_side_pinch_GL).
+    # v9 canonical pinch는 +X=jaw, +Y=up, +Z=수평 접근축이다. 이전 값은 v8
+    # top-down child frame을 사용해 초기 물체 가시성 검사를 잘못 수행했다.
+    # Hand-eye 원점은 여전히 마커중점 기준 잠정값이다.
+    # ⚠️ 로봇용 IMX708 실측 extrinsic 이 아니다. HW 장착값이 오면 교체하고 재평가한다.
+    pos: [0.0014, -0.07747884, 0.05422045]
+    xyaxes: [1.0, 0.0, 0.0, 0.0, 0.96592583, 0.25881905]
+    fovy: 70
+
+# 그리퍼 접촉 패드 — 시뮬 전용. 실물에는 대응물이 없다.
+#
+# ⚠️ 이게 없으면 시뮬에서 아무것도 못 집는다. 이유:
+#    MuJoCo 는 메시 충돌을 볼록껍질(convex hull)로 처리한다. 두 갈래 턱의
+#    볼록껍질은 턱 사이 빈 공간을 통째로 메운 덩어리가 된다.
+#    실측: 그리퍼를 완전히 벌린 상태에서 2cm 정육면체를 파지 위치에 놓으면
+#    턱 껍질을 최대 3.1cm 관통한다. 물체가 들어갈 자리가 아예 없다.
+#
+# 대책: 손가락 안쪽 면에만 박스 패드를 붙이고, 원래 메시 충돌은 끈다.
+#       공식 MJCF 는 건드리지 않는다 — 로드 시점에 MjSpec 으로 처리한다.
+# 값 출처: 각 body 로컬 좌표계에서 메시 정점 클라우드를 직접 측정 (2026-08-27)
+gripper_pads:
+  # 접촉을 끌 원본 충돌 메시 (손가락을 포함해 껍질이 포켓을 메우는 것들)
+  disable_mesh_collision:
+    - wrist_roll_follower_so101_v1   # 고정 손가락
+    - moving_jaw_so101_v1            # 가동 턱
+  pads:
+    - name: pad_fixed
+      body: gripper
+      # 고정 손가락 안쪽면. 메시 실측 x[-0.0336,-0.0079] z[-0.1044,-0.0451]
+      pos: [-0.0125, 0.0, -0.082]
+      half_size: [0.005, 0.011, 0.018]
+    - name: pad_moving
+      body: moving_jaw_so101_v1
+      # 가동 턱 안쪽면. 메시 실측 x[-0.0123,+0.0100] y[-0.0820,+0.0100]
+      pos: [-0.009, -0.055, 0.019]
+      half_size: [0.004, 0.020, 0.011]
+  friction: [1.5, 0.01, 0.001]
+  condim: 4          # 마찰 원뿔 + 비틀림 마찰. 3이면 물체가 패드 위에서 굴러 빠진다
+  rgba: [0.1, 0.7, 0.3, 0.6]
+
+# 태스크 — 대상물 1.5~2.5cm (그리퍼 닫힘 시 손가락 간격 약 1.7cm)
+task:
+  object:
+    type: box
+    half_size_m: [0.010, 0.010, 0.010]   # 한 변 2cm
+    mass_kg: 0.020
+    init_pos: [0.22, 0.00, 0.011]
+  table:
+    half_size_m: [0.30, 0.30, 0.02]
+    pos: [0.15, 0.0, -0.02]              # 윗면 z = 0, 로봇 베이스와 같은 평면
+
+# 파지 파라미터 — 전부 실측으로 정한 값이다. 추정 없음.
+# 측정: 2026-08-27, MuJoCo 3.12.0. 상세는 docs/MEASURE_grasp_0827.md
+grasp:
+  # 레거시 고정 파지점. gap 종속 정의가 없는 예전 경로의 호환용이다.
+  pinch_offset_local: [0.0, 0.0, -0.080]
+  # SO-101은 고정 턱 하나와 가동 턱 하나라 두 접촉면의 중점이 gap에 따라 움직인다.
+  # pad_fixed의 안쪽 면 x=-0.0125+0.005=-0.0075m (위 gripper_pads 실측값),
+  # 턱은 gripper 로컬 +x로 벌어진다. 따라서 midpoint=fixed+gap/2*axis다.
+  # 시뮬레이터 형상에서 재현한 값이며 실물 모터 캘리브레이션으로 사용하지 않는다.
+  gap_dependent_pinch_midpoint:
+    kind: asymmetric_parallel_jaw
+    fixed_inner_surface_local_m: [-0.0075, 0.0, -0.080]
+    gap_axis_local: [1.0, 0.0, 0.0]
+  approach_axis: [0.0, 0.0, -1.0]     # 손가락이 향할 월드 방향 (수직 하강 파지)
+  approach_height_m: 0.07             # 파지점 위 접근 높이
+  grasp_z_offset_m: 0.008             # 물체 중심보다 이만큼 위를 잡는다.
+                                      # 패드 z 길이가 3.6cm라 물체 중심을 잡으면
+                                      # 패드 아래끝이 테이블을 뚫는다 (실측).
+  # 파지점에 도착한 뒤 그리퍼를 **열린 채로** 머무는 시간.
+  #
+  # ⚠️ 실측 근거 (2026-09-03, MEASURE_bc_v3_deterministic) 🟢:
+  #    0 일 때 데이터에는 "목표에 도착했고 아직 안 닫은" 프레임이 **한 장도 없다.**
+  #    계획이 시간 고정이라 팔은 항상 66틱에 도착하고 67틱에 닫기 시작한다.
+  #    그래서 정책은 "도달했으니 여기서 멈춰라"를 배울 표본이 없고, 실측상
+  #    최근접(7.6~11.8mm)을 지나 닫는 순간(15.7~23.6mm)까지 +6~12mm 발산한다.
+  #    scripted 는 같은 지표가 4.7mm 이고 84% 다.
+  #    dwell 은 그 구간에 안정화 표본을 넣는다. 0.0 이면 이전 동작과 동일하다.
+  #
+  # ⚠️ 부작용: dwell 프레임은 모든 팔 관절의 delta 가 0 이므로 "정확히 0" 비율이
+  #    함께 올라간다 (2편 표본: pan 54->59%, roll 68->72%). L1 은 "도착했으니 멈춰라"의
+  #    0 과 "이 구간에 안 쓰이는 관절"의 0 을 구분하지 못한다. 판정은 롤아웃이 한다.
+  #
+  # ⚠️ 이 값을 바꾸면 에피소드 길이와 데이터 분포가 바뀐다 → 재수집 필요,
+  #    기존 체크포인트와 수치 비교 불가.
+  dwell_s: 0.0                        # v4(0%) 회귀로 되돌림 — MEASURE_dwell_0907
+
+  # 시연 구간별 소요 시간. 코드에 하드코딩돼 있던 값을 옮겼다 (2026-09-03).
+  # 시간 고정이므로 팔은 물체 거리와 무관하게 항상 같은 틱에 도착한다 —
+  # 등속으로 바꾸려면 여기가 아니라 pick_waypoints 를 고쳐야 한다 (미착수).
+  timing:
+    approach_s: 1.2                   # 파지점 위 접근 높이까지
+    descend_s: 1.0                    # 파지점까지 하강
+    close_s: 1.0                      # 제자리에서 닫기
+    lift_s: 1.5                       # 들어올리기
+  # ⚠️ 실측: 손가락을 수직으로 유지한 채로는 파지점 위 8cm 까지만 IK 가 수렴한다.
+  #    +8cm  위치오차 0.92mm 접근축오차 0.33deg  수렴
+  #    +10cm 위치오차 7.14mm 접근축오차 3.75deg  관절한계 접촉, 실패
+  #    +12cm 위치오차 19.9mm 접근축오차 11.2deg  실패
+  #    12cm 로 두면 IK 가 관절한계에 클램프된 해를 내놓고, 그리퍼가 기울어진 채로
+  #    올라간다. 물체는 올라가지만 요청한 자세가 아니다. 8cm 로 고정한다.
+  # 상태 피드백 전문가 (policy/baselines.py ScriptedFeedbackPolicy).
+  # DAgger 는 "이 상태에서 전문가라면?"을 물어야 하는데 개루프 계획은 답할 수 없다.
+  # 여기 값들은 phase 전환 기준과 속도 제한이며, 하드코딩하지 않는다.
+  feedback:
+    max_joint_step_rad: 0.05          # 관절당 1틱 최대 변화. 30Hz 에서 1.5 rad/s
+    approach_tol_m: 0.010             # 접근 → 하강 전환 거리
+    grasp_tol_m: 0.005                # 하강 → 닫기 전환 거리. 재생 허용오차 실측 ±5mm 4/4 에 맞춤
+    resolve_obj_move_m: 0.002         # 물체가 이만큼 움직이면 IK 재계산
+  lift_height_m: 0.08
+
+  # 그리퍼 명령 [rad]. 아래 gap 곡선에서 물체 크기에 맞춰 고른 값.
+  open_cmd: 0.60                      # gap 4.86cm
+  close_cmd: 0.06                     # gap 약 1.8cm — 2cm 물체보다 살짝 좁게
+
+  # ⚠️ 완전 닫힘(-0.17453)으로 명령하면 물체가 튕겨나간다.
+  #    실측: 접촉력 26N, 들어올린 높이 0.00cm (전량 실패).
+  #    close_cmd=0.06 일 때 접촉력 1.9N, 성공. 물체 크기마다 재계산 필요.
+  # 패드간 gap 곡선 (실측):
+  # [그리퍼 각도 rad, 패드간 간격 cm]
+  gap_curve:
+    - [-0.1745, 0.53]
+    - [-0.0145, 1.39]
+    - [ 0.1454, 2.28]
+    - [ 0.3054, 3.17]
+    - [ 0.4654, 4.03]
+    - [ 0.6254, 4.86]
+    - [ 0.9454, 6.30]
+    - [ 1.2654, 7.34]
+    - [ 1.7453, 7.94]
+
+  success_lift_m: 0.05                # 성공 판정: 이만큼 올리고 접촉 유지
+
+# 도달 가능 작업영역 — 실측. 스킬 레지스트리(contract/skills.py)가 이 값으로
+# 각 스킬의 workspace 선언을 검증한다.
+# 측정: 2026-08-27 reach_scan, 255점 격자 중 163점 도달 = 63.9%.
+#       최대 연속 직사각형 x[0.10,0.25] y[-0.175,0.175] = 15cm x 35cm
+#       상세: docs/MEASURE_mujoco_scene_0827.md
+# ⚠️ 시뮬 IK 기준값이다. 실물에서 재계측해야 한다.
+workspace:
+  reachable_rect_m:
+    x: [0.10, 0.25]
+    y: [-0.175, 0.175]
+  reachable_fraction: 0.639
+  measured_at: "2026-08-27"
+  source: docs/MEASURE_mujoco_scene_0827.md
+
+control:
+  rate_hz: 30                   # 데이터 규격 주기

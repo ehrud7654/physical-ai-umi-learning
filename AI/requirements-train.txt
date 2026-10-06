@@ -1,0 +1,7 @@
+# BC 학습 의존성. 시뮬 계측용은 requirements-sim.txt 에 있다.
+#
+# ⚠️ torch 는 환경에 맞는 빌드를 직접 고른다. 아래는 버전만 고정한다.
+#    CPU:    pip install torch --index-url https://download.pytorch.org/whl/cpu
+#    CUDA:   https://pytorch.org/get-started/locally/ 에서 해당 CUDA 버전 선택
+#    검증 환경: torch 2.13.0+cu130 을 CPU 로 실행 (GPU 없음)
+torch>=2.0

@@ -1,0 +1,27 @@
+{
+  "calibration_id": "umi-s22-pinch-cad-20260912-provisional",
+  "status": "provisional",
+  "reason": "CAD/calculation-derived fixed fingertip TCP; not an assembled-rig hand-eye measurement",
+  "recorded_pose_camera_axes": "+X right, +Y up, -Z forward (ARCore/OpenGL getPose, no remap)",
+  "source_extrinsic_camera_axes": "+X right, +Y down, +Z forward (OpenCV)",
+  "fixed_tcp_note": "Pinch point is fixed at the supplied fingertip reference; gap-dependent pivot motion is unmodelled",
+  "t_arcore_camera_to_umi_pinch": [
+    [1.0, 0.0, 0.0, 0.0],
+    [0.0, 0.25881904510252074, 0.9659258262890683, -0.0246],
+    [0.0, -0.9659258262890683, 0.25881904510252074, -0.1763],
+    [0.0, 0.0, 0.0, 1.0]
+  ],
+  "source": {
+    "translation_opencv_m": [0.0, 0.0246, 0.1763],
+    "rotation_opencv": "Rx(105 deg)",
+    "evidence": "team reply based on S22-to-UMI-pinch mounting geometry"
+  },
+  "imu": {
+    "used_for_pose_conversion": false,
+    "axes": "+X device-right, +Y device-top, +Z out of screen",
+    "accelerometer_unit": "m/s^2 including gravity",
+    "gyroscope_unit": "rad/s",
+    "clock": "elapsedRealtime/SensorEvent.timestamp",
+    "device_to_camera_extrinsic": "not provided; required only for future IMU fusion"
+  }
+}

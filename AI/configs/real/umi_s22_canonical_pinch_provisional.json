@@ -1,0 +1,36 @@
+{
+  "calibration_id": "umi-s22-marker-midpoint-canonical-pinch-20260914-provisional",
+  "status": "REJECTED_AXIS_HYPOTHESIS",
+  "reason": "Rejected after gravity cross-check: the permutation hypothesis makes canonical +Z horizontal at closure and produces 59.6-289.1 mm grasp-height errors in the validation episodes. Retained only to preserve v7 provenance.",
+  "t_cam_to_pinch_axes": "+X right, +Y up, -Z forward (ARCore/OpenGL)",
+  "child_frame": "canonical_pinch_marker_midpoint",
+  "child_axes": "+X jaw opening, +Z toward fingertips, +Y completes the right-handed frame",
+  "t_cam_to_pinch": [
+    [1.0, 0.0, 0.0, -0.0014],
+    [0.0, -0.9659258262890683, -0.25881904510252074, 0.0401],
+    [0.0, 0.25881904510252074, -0.9659258262890683, -0.1497],
+    [0.0, 0.0, 0.0, 1.0]
+  ],
+  "source": {
+    "calibration_id": "umi-s22-marker-midpoint-video-20260912-provisional",
+    "child_frame": "custom_hand_marker_midpoint",
+    "custom_hand_axes": "+X jaw opening, -Y toward fingertips, +Z completes the right-handed frame",
+    "basis_change": "T_camera_canonical_pinch = T_camera_custom_hand @ T_custom_hand_canonical_pinch",
+    "t_custom_hand_canonical_pinch_rotation": [
+      [1.0, 0.0, 0.0],
+      [0.0, 0.0, -1.0],
+      [0.0, 1.0, 0.0]
+    ]
+  },
+  "evidence": {
+    "translation": "video marker midpoint, 5149 detected frames",
+    "rotation": "HW drawing custom_hand axes plus explicit canonical child-frame basis change",
+    "physical_sanity_check": "camera is 134.2 mm behind canonical +Z (above a top-down pinch), whereas omitting the child-axis mapping places it 77.5 mm below the pinch",
+    "limitations": [
+      "marker midpoint to pad-centre offset is unmeasured",
+      "roll is not independently measured",
+      "REJECTED: do not use for training, simulation claims, or real robot commands",
+      "valid only for the 2026-09-11 physical mounting"
+    ]
+  }
+}

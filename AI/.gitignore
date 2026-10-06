@@ -1,0 +1,16 @@
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# 렌더·계측 산출물은 커밋하지 않는다. tools/render_check.py 로 재생성한다.
+out/
+
+# 수집한 데이터셋은 커밋하지 않는다 (에피소드당 약 9MB).
+# data/ 는 수집·검증 코드이므로 제외 대상이 아니다. 데이터셋은 datasets/ 에 있다.
+datasets/
+
+.pytest_cache/
+
+# 학습 체크포인트는 커밋하지 않는다 (배포는 BE 의 ckpt API 를 통한다).
+checkpoints/

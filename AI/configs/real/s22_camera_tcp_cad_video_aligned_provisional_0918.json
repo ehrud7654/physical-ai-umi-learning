@@ -1,0 +1,75 @@
+{
+  "schema_version": 2,
+  "status": "cad_tcp_video_axes_aligned_origin_provisional",
+  "convention": "T_A_B maps B column vectors into A; metres",
+  "source": "HW handoff 2026-09-18 s22_camera_estimate_v005.json lenses.ultrawide.T_lens_tcp, cross-checked against the 2026-09-11 5149-frame marker-midpoint measurement",
+  "image_orientation_contract": "upright_v1",
+  "child_frame": "v10_canonical_pad_center_design_tcp",
+  "child_axes": "+X jaw opening, +Y up, +Z horizontal approach toward the upright object",
+  "cad_tcp_definition": {
+    "frame": "gripper_tcp",
+    "parent": "custom_hand_link",
+    "origin_m": [0.0, -0.0780187530518, 0.0270000119209],
+    "rpy_rad": [1.5707963267948966, 0.0, 0.0],
+    "axes": "+X=hand +X jaw opening, +Y=hand +Z, +Z=hand -Y toward fingertips",
+    "source": "handoff assets/robot/spec/MODELING_SPEC.md and frames_and_joints.json",
+    "physical_pad_center_independently_measured": false
+  },
+  "T_cad_tcp_v10_canonical": [
+    [1.0, 0.0, 0.0, 0.0],
+    [0.0, 1.0, 0.0, 0.0],
+    [0.0, 0.0, 1.0, 0.0],
+    [0.0, 0.0, 0.0, 1.0]
+  ],
+  "axis_mapping_derivation": {
+    "old_saved_jpeg_to_upright_v1": "Rz(180deg); the new collector bakes the 180-degree pixel rotation",
+    "old_saved_jpeg_from_cad_lens": "Rz(+90deg), solved by requiring the CAD gripper_tcp axes to equal the video-checked v10 canonical axes",
+    "upright_v1_from_cad_lens": "Rz(180deg) @ Rz(+90deg) = Rz(-90deg)",
+    "previous_Rz_180_assumption_rotation_error_deg": 89.99999880178046
+  },
+  "T_camera_lens": [
+    [0.0, 1.0, 0.0, 0.0],
+    [-1.0, 0.0, 0.0, 0.0],
+    [0.0, 0.0, 1.0, 0.0],
+    [0.0, 0.0, 0.0, 1.0]
+  ],
+  "T_lens_tcp": [
+    [-8.124766281980556e-08, 0.9659259915351868, 0.2588188946247101, -0.024311400949954987],
+    [-1.0, 4.3612807592782743e-13, -3.139166722121445e-07, -0.014750046655535698],
+    [-3.032203039765591e-07, -0.2588188946247101, 0.9659259915351868, 0.17365705966949463],
+    [0.0, 0.0, 0.0, 1.0]
+  ],
+  "T_camera_tcp": [
+    [-1.0, 4.3612807592782743e-13, -3.139166722121445e-07, -0.014750046655535698],
+    [8.124766281980556e-08, -0.9659259915351868, -0.2588188946247101, 0.024311400949954987],
+    [-3.032203039765591e-07, -0.2588188946247101, 0.9659259915351868, 0.17365705966949463],
+    [0.0, 0.0, 0.0, 1.0]
+  ],
+  "video_marker_midpoint_crosscheck": {
+    "source_config": "configs/real/umi_s22_canonical_pinch_side_grasp_provisional.json",
+    "source_frames": 5149,
+    "T_upright_camera_marker_midpoint": [
+      [-1.0, 0.0, 0.0, 0.0014],
+      [0.0, -0.9659258262890683, -0.25881904510252074, 0.0401],
+      [0.0, -0.25881904510252074, 0.9659258262890683, 0.1497],
+      [0.0, 0.0, 0.0, 1.0]
+    ],
+    "T_marker_midpoint_cad_tcp": [
+      [1.0, 0.0, 3.139166722121445e-07, 0.016150046655535697],
+      [0.0, 1.0, -1.877018478204839e-07, 0.00905007227568454],
+      [-3.139166722121445e-07, 1.877018478204839e-07, 1.0, 0.027227132785945206],
+      [0.0, 0.0, 0.0, 1.0]
+    ],
+    "rotation_residual_deg": 0.0,
+    "origin_delta_in_upright_camera_mm": [-16.150046655535697, -15.788599050045013, 23.95705966949463],
+    "origin_delta_norm_mm": 32.92483219314547,
+    "interpretation": "Axes agree after the explicit image-frame conversion. The non-zero translation is expected because the video point is the marker midpoint while the CAD point is the nominal design TCP; it also contains unmeasured CAD-lens-to-optical-origin error."
+  },
+  "physical_deployment_allowed": false,
+  "limitations": [
+    "The CAD gripper_tcp is used as the nominal v10 pad-centre design TCP, but its coincidence with the physical contact-pad centre has not been measured.",
+    "The CAD lens origin is not an independently measured optical entrance pupil.",
+    "The 14.75 mm lateral disagreement with the earlier HW fingertip-origin estimate remains unresolved.",
+    "Use for dataset regeneration and Track A/B contract comparison only; do not use to command real motors."
+  ]
+}

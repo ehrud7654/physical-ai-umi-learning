@@ -1,0 +1,28 @@
+{
+  "calibration_id": "umi-s22-marker-midpoint-video-20260912-provisional",
+  "status": "provisional_marker_midpoint",
+  "reason": "Legacy v6 calibration: translation is the detected marker midpoint and the child rotation follows the supplied custom_hand drawing axes. It is not yet the policy canonical pinch frame.",
+  "t_cam_to_pinch_axes": "+X right, +Y up, -Z forward (ARCore/OpenGL)",
+  "child_frame": "custom_hand_marker_midpoint",
+  "child_axes": "+X jaw opening, -Y toward fingertips, +Z completes the right-handed frame",
+  "t_cam_to_pinch": [
+    [1.0, 0.0, 0.0, -0.0014],
+    [0.0, 0.25881904510252074, -0.9659258262890683, 0.0401],
+    [0.0, 0.9659258262890683, 0.25881904510252074, -0.1497],
+    [0.0, 0.0, 0.0, 1.0]
+  ],
+  "source_opencv": {
+    "axes": "+X right, +Y down, +Z forward (OpenCV)",
+    "translation_m": [-0.0014, -0.0401, 0.1497],
+    "conversion": "T_arcore_gl = diag(1,-1,-1,1) @ T_opencv"
+  },
+  "evidence": {
+    "translation": "video marker midpoint, 5149 detected frames",
+    "rotation": "HW drawing; gravity direction discriminated over 3624 frames",
+    "limitations": [
+      "marker midpoint to pad-centre offset is unmeasured",
+      "roll is not independently measured",
+      "valid only for the 2026-09-11 physical mounting"
+    ]
+  }
+}

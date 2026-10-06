@@ -1,0 +1,95 @@
+{
+  "schema": "so101_kinematic_grasp/0.1.0",
+  "source_archive": "handoff.zip",
+  "source_archive_sha256": "5386a22ea54729215cb544b844079621150a1ff4d751b54daf9f031a9c077d8b",
+  "source_robot_name": "so101_ver1_phone_holder_v010",
+  "source_chain": [
+    "wrist_roll",
+    "custom_hand_fixed",
+    "gripper_tcp_fixed"
+  ],
+  "frame": "legacy_mujoco_gripper_body_wrist_roll_frame",
+  "pinch_offset_local_m": [
+    2.099999999976391e-7,
+    -5.640000000008504e-7,
+    -0.158118819
+  ],
+  "eef_frame_local": {
+    "jaw_axis": [-0.048656744, 0.998815559, -0.000003629],
+    "up_axis": [0.998815559, 0.048656744, 0.000000910],
+    "approach_axis": [0.000001085, -0.000003580, -1.0]
+  },
+  "gap_midpoint_kind": "symmetric_parallel_jaw",
+  "visual_model": {
+    "schema": "so101_parallel_jaw_visual/0.1.0-provisional",
+    "asset_dir": "sim/mujoco/assets/ver1",
+    "custom_hand_body": "ver1_custom_hand_visual",
+    "custom_hand_fixed_from_legacy_gripper": {
+      "xyz_m": [-0.0269679069519, -0.00131401753426, -0.0801000900269],
+      "rpy_rad": [1.5707954168329252, 0.000003628942180264, 1.6194722907041545]
+    },
+    "static_meshes": [
+      "cover_top.obj",
+      "cover_bottom.obj",
+      "adapter.obj",
+      "drive_motor.obj"
+    ],
+    "finger_bodies": [
+      {
+        "name": "ver1_left_finger_visual",
+        "sign": -1.0,
+        "meshes": ["holder_left.obj", "finger_left.obj"]
+      },
+      {
+        "name": "ver1_right_finger_visual",
+        "sign": 1.0,
+        "meshes": ["holder_right.obj", "finger_right.obj"]
+      }
+    ],
+    "hide_legacy_meshes": [
+      "wrist_roll_follower_so101_v1",
+      "moving_jaw_so101_v1"
+    ],
+    "source_geometry": "handoff.zip/model/assets/ver1",
+    "visual_collision_alignment_required": true
+  },
+  "collision_proxy": {
+    "schema": "so101_parallel_jaw_collision_proxy/0.1.0-provisional",
+    "purpose": "recorded_oracle_contact_diagnostic_only",
+    "parent_body": "gripper",
+    "disable_mesh_collision": [
+      "wrist_roll_follower_so101_v1",
+      "moving_jaw_so101_v1"
+    ],
+    "pad_names": [
+      "ver1_pad_negative",
+      "ver1_pad_positive"
+    ],
+    "finger_half_size_m": [0.003, 0.0077, 0.013],
+    "gap_range_m": [0.0, 0.09],
+    "friction": [1.2, 0.01, 0.001],
+    "condim": 4,
+    "rgba": [0.05, 0.85, 0.95, 0.65],
+    "diagnostic_dynamic_ready": true,
+    "measured_collision_geometry": false,
+    "reference_fit": {
+      "source_archive": "handoff_20260916.zip",
+      "source_archive_sha256": "fd7e49fe1680bef55e21ab97be71293e22f19a34abef731df0529508971c2ac2",
+      "source_path": "handoff/simulation/robot.py",
+      "source_body_frame_half_size_m": [0.003, 0.013, 0.0077],
+      "source_body_frame_centres_m": [
+        [-0.003, -0.065, 0.027],
+        [0.003, -0.065, 0.027]
+      ],
+      "note": "Reference package calls these explicitly fitted boxes, but does not provide physical measurement provenance. The local proxy frame swaps its second and third half-size axes."
+    }
+  },
+  "camera_optical_extrinsic_present": false,
+  "dynamic_mujoco_ready": false,
+  "limitations": [
+    "The parallel-jaw boxes reproduce the fitted contact patches in handoff_20260916.zip but remain provisional, not measured collision geometry.",
+    "The proxy updates both pad positions from the measured gap curve but does not replace ver1 inertia or actuator geometry.",
+    "The handoff declares camera optical extrinsic, validated custom inertias and collision-safe limits unavailable.",
+    "Do not use this file as physical robot calibration or motor-safety approval."
+  ]
+}

@@ -1,0 +1,10 @@
+{
+  "job_id": "demo-001",
+  "dataset_name": "s22_pick_v1",
+  "calibration_profile": "s22_20260921",
+  "require_mapping": true,
+  "mapping_session_id": "rec_001_mapping",
+  "demonstration_session_ids": [
+    "rec_000_demo"
+  ]
+}

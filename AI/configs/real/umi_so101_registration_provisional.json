@@ -1,0 +1,62 @@
+{
+  "status": "PROVISIONAL_NOT_PHYSICAL_CALIBRATION",
+  "source": "AI/out/relative_chunk_v9_registration_search32_side_body_grasp_cam_upfix_repselect.json selected candidate 6",
+  "purpose": "Offline relative-chunk IK preflight and camera-matched MuJoCo diagnostics only",
+  "start_arm_rad": [
+    0.02300224774287435,
+    0.734927050147258,
+    0.7754200629265137,
+    -1.5175320634421574,
+    1.6207283370437329
+  ],
+  "object_xyz_m": [
+    0.4386867961954792,
+    0.017416108524731327,
+    0.03835
+  ],
+  "object_size_m": [0.039, 0.040, 0.0767],
+  "object_size_evidence": {
+    "grasp_axis": "world_y",
+    "grasp_axis_width_m": 0.040,
+    "grasp_axis_width_source": "user-reported physical measurement on 2026-09-16",
+    "measurement_method": "not recorded",
+    "measurement_repetitions": "not recorded",
+    "other_dimensions_status": "provisional"
+  },
+  "desired_world_jaw_axis": [0.0, 1.0, 0.0],
+  "jaw_yaw_tolerance_deg": 15.0,
+  "desired_world_approach_axis": [1.0, 0.0, 0.0],
+  "approach_axis_tolerance_deg": 15.0,
+  "desired_world_up_axis": [0.0, 0.0, 1.0],
+  "up_axis_tolerance_deg": 15.0,
+  "body_midheight_tolerance_m": 0.012,
+  "grasp_mode": "upright_body_side_grasp",
+  "axis_source": "MuJoCo task-frame convention from demonstration semantics: approach horizontally from -X toward +X, close across world Y, and grasp the upright case at body mid-height; not a measured robot-base/workspace registration",
+  "table_half_size_xy_m": [0.4, 0.4],
+  "evidence": {
+    "episode": "rec_20260911_150943",
+    "contact_index": 12,
+    "contact_gap_m": 0.04072455316781998,
+    "first_view_visible": true,
+    "first_view_centre_error_norm": 0.171993000939679,
+    "jaw_yaw_error_deg": 1.76789305852636,
+    "approach_axis_error_deg": 1.77816752939493,
+    "up_axis_error_deg": 0.242422147049927,
+    "grasp_height_error_m": 0.00591192651572704,
+    "sampled_oracle_chunks_accepted": "2/2",
+    "dynamic_oracle_gate": {
+      "report": "AI/out/relative_chunk_v9_width40mm_preload2mm_lookback2_dynamic_gate14_preliftfix_20260916.json",
+      "status": "PASS_LOCAL_DYNAMIC_ORACLE_GATE",
+      "successes": "14/14",
+      "required_success_fraction": 0.8,
+      "scope": "policy-free simulation diagnostic with fixed K=2 approach start and uncalibrated 2mm execution preload"
+    }
+  },
+  "limitations": [
+    "Search registration, not a measured robot-base-to-workspace calibration.",
+    "The 40mm grasp-axis body width is user-measured; depth and height remain provisional.",
+    "S22 marker-midpoint hand-eye remains provisional.",
+    "The 14/14 dynamic recorded-oracle pass uses an uncalibrated simulation-only 2mm execution preload and fixed contact-relative starts; it is not hardware validation.",
+    "Must not be used for real motor commands."
+  ]
+}

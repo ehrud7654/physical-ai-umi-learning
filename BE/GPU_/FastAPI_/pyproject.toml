@@ -1,0 +1,19 @@
+[project]
+name = "umi-gpu-training-api"
+version = "0.1.0"
+requires-python = ">=3.12"
+dependencies = [
+  "fastapi==0.116.1",
+  "uvicorn[standard]==0.35.0",
+  "pydantic-settings==2.10.1",
+  "httpx==0.28.1",
+  "psutil==7.0.0",
+]
+
+[project.optional-dependencies]
+test = ["pytest==8.4.1", "pytest-asyncio==1.1.0", "respx==0.22.0"]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+pythonpath = ["."]
+

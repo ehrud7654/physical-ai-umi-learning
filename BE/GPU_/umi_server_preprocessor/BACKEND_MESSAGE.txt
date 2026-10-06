@@ -1,0 +1,12 @@
+ORB-SLAM Atlas v2 전체 교체본을 전달드립니다. 기존 umi_server_preprocessor/ 구조를 유지했습니다.
+
+핵심 변경:
+- API에서 Mapping/Demonstration 세션 ID를 명시하며 outcome·길이·파일명·업로드 순서로 역할을 추정하지 않습니다.
+- Mapping outcome=unrated는 허용하고, Demonstration은 outcome=success만 학습 후보로 처리합니다.
+- ArUco ID 13(0.16m)은 Mapping의 Atlas→table 정렬에 필수지만 공유 Atlas를 쓰는 각 Demonstration에서는 진단값일 뿐 필수 게이트가 아닙니다.
+- Demonstration은 원본 Atlas를 --load_map으로만 불러옵니다. 편 내부 local mapping은 허용하지만
+  --localization_only와 --save_map은 사용하지 않으며 원본 Atlas SHA-256 불변성을 검사합니다.
+- 종료코드 0과 별개로 tracking/gap/timestamp/pose-continuity gate를 적용하고 편별 탈락 사유·모수·시작 TCP 6DoF를 pipeline_report.json에 남깁니다.
+- Mapping 대신 외부 Atlas를 쓸 경우 Atlas·정렬 파일 경로와 SHA-256을 모두 요구합니다.
+
+이번 2세션은 62초 세션을 raw_mapping/에 두고 mapping_session_id로 지정하며, success 시연은 raw/에 두고 demonstration_session_ids에 지정해 주세요. 자세한 적용 예시는 INTEGRATION_BACKEND.md를 확인해 주세요.

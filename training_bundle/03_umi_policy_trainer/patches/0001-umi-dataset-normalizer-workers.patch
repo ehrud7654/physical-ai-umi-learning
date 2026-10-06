@@ -1,0 +1,13 @@
+diff --git a/diffusion_policy/dataset/umi_dataset.py b/diffusion_policy/dataset/umi_dataset.py
+index 1285115..b8ef553 100644
+--- a/diffusion_policy/dataset/umi_dataset.py
++++ b/diffusion_policy/dataset/umi_dataset.py
+@@ -199,7 +199,7 @@ class UmiDataset(BaseDataset):
+         dataloader = torch.utils.data.DataLoader(
+             dataset=self,
+             batch_size=64,
+-            num_workers=32,
++            num_workers=0,  # Local Windows/8 GB setup: avoid 32 spawned dataset copies.
+         )
+         for batch in tqdm(dataloader, desc='iterating dataset to get normalization'):
+             for key in self.lowdim_keys:

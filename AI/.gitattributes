@@ -1,0 +1,43 @@
+# 줄바꿈을 저장소에서 LF 로 고정한다.
+#
+# Git for Windows 는 보통 core.autocrlf=true 로 설치되어, 체크아웃 시 CRLF 로
+# 바꾼다. 그러면 내용을 한 글자도 고치지 않아도 파일 전체가 변경된 것으로 잡히고,
+# 커밋에 줄바꿈 노이즈가 섞여 diff 로 무엇이 바뀌었는지 볼 수 없게 된다.
+# 실제로 2026-08-27 에 view.py 190줄이 그렇게 커밋에 딸려 들어갔다.
+#
+# 여기서 eol=lf 로 못박으면 각자의 autocrlf 설정과 무관하게 동일해진다.
+*.py    text eol=lf
+*.sh    text eol=lf
+#
+# 정정 (2026-09-09). *.sh 줄을 넣을 때 근거를 "push_both.sh 에 CR 63개가
+# 있어 리눅스 서버에서 죽는다"로 적었다. **틀렸다.** origin/ai 의 블롭은
+# 세 스크립트 모두 CR=0 이고, 63/85 CR 은 Windows 작업사본에만 있던
+# core.autocrlf 체크아웃 산물이었다. 서버는 원래 LF 를 받는다.
+# 작업사본을 재고 저장소 결함이라고 단정한 것이다.
+# 이 줄을 유지하는 이유는 다르다 — autocrlf 설정에 의존하지 않게
+# 명시적으로 못박는 것이고, .sh 는 CRLF 면 실제로 실행이 안 되므로
+# 다른 확장자보다 보호 가치가 크다.
+*.md    text eol=lf
+*.yaml  text eol=lf
+*.yml   text eol=lf
+*.xml   text eol=lf
+*.txt   text eol=lf
+*.jsonl text eol=lf
+#
+# .gitattributes 자신도 규칙을 받아야 한다. 여기에 자기 자신에 대한 줄이
+# 없으면 core.autocrlf=true 인 Windows 작업사본에서 이 파일만 영구히
+# "수정됨" 으로 남는다. 2026-09-10 에 실제로 그 상태였다 —
+# 작업본 CR 36줄 / HEAD 블롭 CR 0줄 🟢. 줄바꿈 노이즈를 막으려고 만든
+# 파일이 정작 자기 자신은 못 막고 있었다.
+.gitattributes text eol=lf
+
+# 실험 로그는 append-only 다. 양 트랙이 같은 파일 끝에 각자 줄을 붙이므로
+# 기본 3-way merge 는 매번 충돌을 낸다 — 내용이 겹치는 게 아니라 위치가
+# 겹칠 뿐인데도. union 드라이버는 양쪽 줄을 다 남긴다. 그게 맞는 해결이다.
+# (한쪽을 고르면 실험 기록이 사라진다. 계측 기록에 그것보다 나쁜 결과는 없다.)
+EXP_LOG.jsonl merge=union
+
+# 공식 MJCF·메시는 벤더링본이다. Git 이 내용을 건드리지 않게 한다.
+third_party/** -text
+*.stl   binary
+*.part  binary

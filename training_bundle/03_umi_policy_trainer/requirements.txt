@@ -1,0 +1,27 @@
+# Union of 02 and 03 requirements, versions verified with Stanford UMI d095ba9 on Python 3.12.
+# PyTorch is installed separately by setup.sh (torch==2.6.0 torchvision==0.21.0, cu126 index).
+numpy==1.26.4
+scipy==1.13.1
+opencv-contrib-python-headless==4.11.0.86
+timm==0.9.7
+diffusers==0.27.2
+huggingface-hub==0.25.2
+einops==0.8.0
+zarr==2.18.3
+numcodecs==0.12.1
+imagecodecs==2024.6.1
+hydra-core==1.3.2
+dill==0.3.8
+accelerate==0.30.1
+wandb==0.17.9
+threadpoolctl==3.5.0
+imageio==2.35.1
+av==12.3.0
+matplotlib==3.9.2
+psutil==6.0.0
+cloudpickle==3.0.0
+packaging==24.1
+pandas==2.2.3
+filelock
+PyYAML
+tqdm

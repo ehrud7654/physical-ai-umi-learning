@@ -1,0 +1,37 @@
+{
+  "schema": "reviewed_gap_exceptions/0.1",
+  "global_threshold_frames": 15,
+  "review_method": "manual timeline and RGB-frame inspection against closure, minimum-gap and lift phases",
+  "episodes": {
+    "rec_1789701986459_f5ea3eee": {
+      "reviewed": true,
+      "maximum_missing_run_frames": 17,
+      "missing_interval_frames": [
+        0,
+        16
+      ],
+      "missing_interval_s": [
+        0.0,
+        0.57
+      ],
+      "closure_start_frame": 73,
+      "minimum_gap_frame": 145,
+      "reason": "The longest missing run is entirely in the initial fully-open preparation interval, before closure and grasp. Closure and minimum-gap frames are directly observed."
+    },
+    "rec_1789705590144_eda374ba": {
+      "reviewed": true,
+      "maximum_missing_run_frames": 17,
+      "missing_interval_frames": [
+        184,
+        200
+      ],
+      "missing_interval_s": [
+        6.17,
+        6.7
+      ],
+      "closure_start_frame": 45,
+      "minimum_gap_frame": 90,
+      "reason": "The longest missing run occurs after grasp and lift, once the gripper has reopened to about 75 mm during the terminal reset. Closure and minimum-gap frames are directly observed."
+    }
+  }
+}

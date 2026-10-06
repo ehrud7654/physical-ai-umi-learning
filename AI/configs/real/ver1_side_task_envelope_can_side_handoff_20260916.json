@@ -1,0 +1,38 @@
+{
+  "schema": "simulation_task_envelope/0.1.0",
+  "status": "SIMULATION_ONLY_NOT_PHYSICAL_CALIBRATION",
+  "source_archive": "handoff_20260916.zip",
+  "source_archive_sha256": "fd7e49fe1680bef55e21ab97be71293e22f19a34abef731df0529508971c2ac2",
+  "source_paths": [
+    "handoff/configs/can_side.yaml",
+    "handoff/simulation/robot.py"
+  ],
+  "frame": "handoff MuJoCo world with SO-101 base_link at z=0",
+  "object_xy_bounds_m": {
+    "x": [0.385, 0.415],
+    "y": [-0.035, 0.035]
+  },
+  "table": {
+    "centre_m": [0.2, 0.0, -0.035],
+    "half_size_m": [0.6, 0.5, 0.035],
+    "top_z_m": 0.0
+  },
+  "source_task": {
+    "name": "ycb_can_side",
+    "object": "005_tomato_soup_can",
+    "grasp_mode": "side",
+    "base_height_m": 0.0,
+    "open_width_m": 0.09,
+    "close_width_m": 0.045,
+    "object_radius_m": 0.0339,
+    "object_half_height_m": 0.0509275,
+    "object_mass_kg": 0.349
+  },
+  "use": "Predeclared placement-envelope audit for the current ver1 side-grasp model",
+  "limitations": [
+    "The bounds are copied from the HW simulation task and are not measured real table/base calibration.",
+    "The source object is a YCB tomato can, not the baked-potato snack case.",
+    "Only the predeclared XY bounds are reused; object size, mass, friction and close width are not transferred to the real-UMI proxy.",
+    "Passing this envelope does not establish T_base_world or real-robot safety."
+  ]
+}

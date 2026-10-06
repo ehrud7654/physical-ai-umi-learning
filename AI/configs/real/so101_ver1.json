@@ -1,0 +1,102 @@
+{
+  "robot_id": "SO101-SIM-01",
+  "real_robot_id": "SO101-REAL-01",
+  "urdf": "configs/real/so101_ver1.urdf",
+  "urdf_sha256": "d4cf26349a529f4e8e971e04f983ebfec6f43a1c36e337d9ea359700a6685606",
+  "urdf_source_sha256": "78e20d4e2a998bef46a9d242889229144ca89ce73407c247f9e6b4abc82efc18",
+  "base_frame": "base_link",
+  "tcp_frame": "gripper_tcp",
+  "ros_interfaces": {
+    "joint_state_topic": "/joint_states",
+    "arm_stream_topic": "/arm_controller/joint_trajectory",
+    "arm_stream_type": "trajectory_msgs/msg/JointTrajectory",
+    "gripper_topic": "/gripper_controller/commands",
+    "gripper_type": "std_msgs/msg/Float64MultiArray"
+  },
+  "tcp_fixed_from_custom_hand": {
+    "xyz_m": [0.0, -0.0780187530518, 0.0270000119209],
+    "rpy_rad": [1.5707963267948966, 0.0, 0.0]
+  },
+  "joint_order": [
+    "shoulder_pan",
+    "shoulder_lift",
+    "elbow_flex",
+    "wrist_flex",
+    "wrist_roll"
+  ],
+  "limits_rad": {
+    "shoulder_pan": [
+      -1.91986,
+      1.91986
+    ],
+    "shoulder_lift": [
+      -1.74533,
+      1.74533
+    ],
+    "elbow_flex": [
+      -1.57079632679,
+      1.69
+    ],
+    "wrist_flex": [
+      -1.65806,
+      1.65806
+    ],
+    "wrist_roll": [
+      -2.7438472969992493,
+      2.841206309382605
+    ]
+  },
+  "wrist_roll_installation": {
+    "reported_positive_stop_tick": 2864,
+    "reported_ticks_per_turn": 4096,
+    "reported_stop_upper_rad": 1.1320778214596032,
+    "first_bvh_intersection_sample_deg": 65.0,
+    "diagnostic_preflight_upper_rad": 1.0471975511965976,
+    "physical_stop_directly_verified": false,
+    "swept_clearance_verified": false,
+    "note": "60deg is a provisional offline IK screening cap below the first +65deg sampled mesh intersection, not a certified collision-free or motor-safe limit. The +64.86328125deg stop is recalculated from teammate-reported ticks using 4096 ticks/turn and awaits direct HW confirmation."
+  },
+  "max_gap_m": 0.09,
+  "gripper_state_meaning": "full_contact_surface_width_m",
+  "direction": {
+    "shoulder_pan": 1,
+    "shoulder_lift": 1,
+    "elbow_flex": 1,
+    "wrist_flex": 1,
+    "wrist_roll": 1
+  },
+  "zero_tick": {
+    "shoulder_pan": 1990,
+    "shoulder_lift": 2048,
+    "elbow_flex": 1024,
+    "wrist_flex": 2048,
+    "wrist_roll": 2126
+  },
+  "home_rad": {
+    "shoulder_pan": 0.0,
+    "shoulder_lift": 0.0,
+    "elbow_flex": 0.0,
+    "wrist_flex": 0.0,
+    "wrist_roll": 0.0
+  },
+  "home_gap_m": 0.045,
+  "max_speed_rad_s": 1.0,
+  "max_accel_rad_s2": 3.0,
+  "max_gap_speed_m_s": 0.08,
+  "max_gap_accel_m_s2": 0.3,
+  "stale_s": 0.5,
+  "tracking_rad": 0.08,
+  "tracking_gap_m": 0.004,
+  "settle_s": 2.0,
+  "real_calibration_verified": false,
+  "arm_zero_direction_verified": true,
+  "gripper_endpoint_measured": false,
+  "installation_verified": false,
+  "collision_reviewed": false,
+  "notes": [
+    "SIM inertias use estimated density 600 kg/m3 for custom parts; not load validation.",
+    "Table corner not measured: conservative infinite working plane at base underside.",
+    "J1-J5 zero ticks, directions and J3 encoder-safe lower limit were confirmed by HW on 2026-09-09.",
+    "Gripper 0..0.09 m endpoints are assumed, not measured; start-pose registration and table dimensions remain unverified."
+  ]
+}

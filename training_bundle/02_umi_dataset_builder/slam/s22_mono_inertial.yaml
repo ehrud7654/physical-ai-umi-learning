@@ -1,0 +1,53 @@
+%YAML:1.0
+File.version: "1.0"
+
+Camera.type: "PinHole"
+Camera1.fx: 386.783698207
+Camera1.fy: 388.105698794
+Camera1.cx: 473.576277752
+Camera1.cy: 272.084056994
+Camera1.k1: 0.0125279049159
+Camera1.k2: -0.00376646144958
+Camera1.p1: -0.000443263076207
+Camera1.p2: 0.000485273184501
+Camera.width: 960
+Camera.height: 540
+Camera.fps: 30
+Camera.RGB: 0
+
+# Camera frame to Android IMU/body frame. Inverse of calibrated T_cam_imu.
+IMU.T_b_c1: !!opencv-matrix
+   rows: 4
+   cols: 4
+   dt: f
+   data: [0.00878613443889, 0.999943536788, -0.00597721318479, 0.0466809240237,
+      0.99986683002, -0.00870293969888, 0.0138051101797, 0.0163194406859,
+      0.0137523113729, -0.00609771075341, -0.999886839525, 0.0052227239728,
+      0, 0, 0, 1]
+
+# Provisional until stationary Allan analysis. The S22 input adapter applies
+# the 0.0151135622866 s camera-to-IMU time shift.
+IMU.NoiseGyro: 0.0006632
+IMU.NoiseAcc: 0.006865
+IMU.GyroWalk: 0.000266
+IMU.AccWalk: 0.00433
+IMU.Frequency: 213.7
+
+ORBextractor.nFeatures: 2000
+ORBextractor.scaleFactor: 1.2
+ORBextractor.nLevels: 8
+ORBextractor.iniThFAST: 20
+ORBextractor.minThFAST: 7
+System.thFarPoints: 20.0
+
+Viewer.KeyFrameSize: 0.05
+Viewer.KeyFrameLineWidth: 1.0
+Viewer.GraphLineWidth: 0.9
+Viewer.PointSize: 2.0
+Viewer.CameraSize: 0.08
+Viewer.CameraLineWidth: 3.0
+Viewer.ViewpointX: 0.0
+Viewer.ViewpointY: -0.7
+Viewer.ViewpointZ: -3.5
+Viewer.ViewpointF: 500.0
+Viewer.imageViewScale: 1.0

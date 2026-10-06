@@ -1,0 +1,18 @@
+FROM ubuntu:22.04
+
+ENV DEBIAN_FRONTEND=noninteractive
+ENV TZ=Etc/UTC
+
+COPY . /ORB_SLAM3
+
+RUN apt-get update && apt-get install -y sudo ca-certificates && \
+    echo Y | bash /ORB_SLAM3/Thirdparty/Pangolin/scripts/install_prerequisites.sh && \
+    apt-get install -y build-essential libopencv-dev libboost-dev \
+      libboost-serialization-dev libssl-dev && \
+    rm -rf /var/lib/apt/lists/*
+
+RUN sed -i 's/^make -j$/make -j2/' /ORB_SLAM3/build.sh && \
+    cd /ORB_SLAM3 && bash build.sh
+
+WORKDIR /ORB_SLAM3
+CMD ["/bin/bash"]

@@ -1,0 +1,12 @@
+bundle=umi_server_preprocessor_orbslam/0.3.0
+validated_date=2026-09-23
+python_ast=PASS (36 files)
+backend_role_contract_self_test=PASS
+gpu_input_package_self_test=PASS
+orbslam_contract_self_test=PASS
+json_parse=PASS
+shell_syntax=PASS (5 files)
+opencv_builder_tests=NOT_RUN_LOCAL (cv2 unavailable in local Codex runtime; run inside the supplied Docker image)
+docker_image_build=PASS (umi-server-preprocessor:2026.09.23-orbslam-v3)
+real_orbslam_dataset_run=NOT_RUN_IN_THIS_PACKAGING_STEP
+physical_robot_deployment_approval=false

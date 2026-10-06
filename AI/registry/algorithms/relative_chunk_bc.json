@@ -1,0 +1,29 @@
+{
+  "id": "relative_chunk_bc",
+  "displayName": "RelativeChunkBC",
+  "status": "candidate",
+  "datasetInput": {
+    "accepted": [
+      "umi_relative_chunk/0.2.0-provisional"
+    ],
+    "converter": "tools.convert_umi_zarr_to_v10:convert_zarr",
+    "converterInput": "official_umi_zarr"
+  },
+  "trainingEntrypoint": "algorithms.relative_chunk_bc_adapter:train",
+  "trainingSignature": "train(dataset, profile, run_dir, reporter, cancel_event) -> manifest",
+  "defaultProfile": {
+    "config": "configs/train/relative_chunk_bc_spatial4.yaml",
+    "device": "cuda",
+    "epochs": 30,
+    "batch_size": 32,
+    "seed": 0,
+    "lateral_sampling_factor": 1.0
+  },
+  "outputManifestSchema": "relative_chunk_bc_training_manifest/0.1.0",
+  "deploymentApproved": false,
+  "notes": [
+    "Diagnostic candidate; the validated product path remains official UMI diffusion.",
+    "The Zarr converter synthesises timestamps from an explicit/provenance rate_hz.",
+    "Validation loss is not a physical rollout success metric."
+  ]
+}

@@ -1,0 +1,35 @@
+{
+  "schema": "umi_episode_physics/0.1.0",
+  "units": {
+    "size_m": "full object dimensions [x, y, z] in metres",
+    "grasp_height_m": "pinch centre height above the supporting table"
+  },
+  "episodes": {
+    "rec_20260911_150920": {
+      "object_type": "yellow_cup_proxy",
+      "shape": "box",
+      "size_m": [0.04, 0.04, 0.10],
+      "grasp_height_m": 0.08,
+      "evidence": "provisional",
+      "source": "Values used by the 2026-09-12 cup proxy replay; not measured from the delivered recording",
+      "object_center_from_pinch_m": [0.0, 0.0, 0.03],
+      "registration_evidence": "provisional",
+      "registration_observation": {
+        "frame_index": 41,
+        "image": "frames/000041.jpg",
+        "object_bbox_xyxy": [700, 67, 1309, 759],
+        "object_centroid_px": [916.144, 439.922],
+        "method": "largest yellow HSV component; pinhole depth from provisional 0.10m object height",
+        "estimated_depth_m": 0.185662,
+        "candidate_object_center_from_pinch_m": [-0.00572296, 0.01934171, 0.03601318],
+        "candidate_status": "rejected_by_physics_replay",
+        "rejection_reason": "0 jaw contacts and 25 self-collision counts; provisional monocular depth/extrinsic is insufficient"
+      },
+      "grasp_rotation_base": [
+        [0.0, 1.0, 0.0],
+        [1.0, 0.0, 0.0],
+        [0.0, 0.0, -1.0]
+      ]
+    }
+  }
+}

@@ -1,0 +1,5 @@
+numpy>=1.26,<2
+scipy>=1.11,<2
+opencv-contrib-python-headless>=4.9,<5
+zarr>=2.17,<3
+numcodecs>=0.12,<1

@@ -1,0 +1,267 @@
+diff --git a/Examples/Monocular-Inertial/gopro_slam.cc b/Examples/Monocular-Inertial/gopro_slam.cc
+index f9a0f767d..fc3dc17bc 100644
+--- a/Examples/Monocular-Inertial/gopro_slam.cc
++++ b/Examples/Monocular-Inertial/gopro_slam.cc
+@@ -47,4 +47,5 @@ bool LoadTelemetry(const string &path_to_telemetry_file,
+                    vector<double> &vTimeStamps,
+                    vector<double> &coriTimeStamps,
+                    vector<cv::Point3f> &vAcc,
+-                   vector<cv::Point3f> &vGyro) {
++                   vector<cv::Point3f> &vGyro,
++                   bool preserve_sensor_timestamps) {
+@@ -71,7 +72,7 @@ bool LoadTelemetry(const string &path_to_telemetry_file,
+       sorted_gyr.insert(std::make_pair((double)e["cts"] * MS_TO_S, v));
+     }
+
+-    double imu_start_t = sorted_acc.begin()->first;
++    double imu_start_t = preserve_sensor_timestamps ? 0.0 : sorted_acc.begin()->first;
+     for (auto acc : sorted_acc) {
+         vTimeStamps.push_back(acc.first-imu_start_t);
+         vAcc.push_back(acc.second);
+@@ -112,6 +113,9 @@ int main(int argc, char **argv) {
+   std::string input_imu_json;
+   app.add_option("-j,--input_imu_json", input_imu_json)->required();
+
++  bool use_sensor_timestamps = false;
++  app.add_flag("--use_sensor_timestamps", use_sensor_timestamps);
++
+   std::string output_trajectory_tum;
+   app.add_option("--output_trajectory_tum", output_trajectory_tum);
+
+@@ -121,6 +125,9 @@ int main(int argc, char **argv) {
+   std::string load_map;
+   app.add_option("-l,--load_map", load_map);
+
++  bool localization_only = false;
++  app.add_flag("--localization_only", localization_only);
++
+   std::string save_map;
+   app.add_option("--save_map", save_map);
+
+@@ -159,7 +166,15 @@ int main(int argc, char **argv) {
+   vector<double> imuTimestamps;
+   vector<double> camTimestamps;
+   vector<cv::Point3f> vAcc, vGyr;
+-  LoadTelemetry(input_imu_json, imuTimestamps, camTimestamps, vAcc, vGyr);
++  if (!LoadTelemetry(input_imu_json, imuTimestamps, camTimestamps, vAcc, vGyr,
++                     use_sensor_timestamps)) {
++    cerr << "Failed to load telemetry: " << input_imu_json << endl;
++    return 1;
++  }
++  if (imuTimestamps.size() != vAcc.size() || vAcc.size() != vGyr.size()) {
++    cerr << "IMU timestamp, accelerometer and gyroscope counts differ" << endl;
++    return 1;
++  }
+
+   // open setting to get image resolution
+   cv::FileStorage fsSettings(setting, cv::FileStorage::READ);
+@@ -190,6 +205,9 @@ int main(int argc, char **argv) {
+     enable_gui, load_map, save_map,
+     aruco_dict, init_tag_id, init_tag_size
+   );
++  if (!load_map.empty() && localization_only) {
++    SLAM.ActivateLocalizationMode();
++  }
+
+   // Open video file
+   cv::VideoCapture cap(input_video, cv::CAP_FFMPEG);
+@@ -201,6 +219,11 @@ int main(int argc, char **argv) {
+   // Main loop
+   int nImages = cap.get(cv::CAP_PROP_FRAME_COUNT);
+   double fps = cap.get(cv::CAP_PROP_FPS);
++  if (use_sensor_timestamps && camTimestamps.size() != static_cast<size_t>(nImages)) {
++    cerr << "Camera timestamp count " << camTimestamps.size()
++         << " differs from video frame count " << nImages << endl;
++    return 1;
++  }
+   cout << "Video opened using backend " << cap.getBackendName() << endl;
+   cout << "There are " << nImages << " frames in total" << endl;
+   cout << "video FPS " << fps << endl;
+@@ -208,8 +231,12 @@ int main(int argc, char **argv) {
+   std::vector<ORB_SLAM3::IMU::Point> vImuMeas;
+   size_t last_imu_idx = 0;
+   int n_lost_frames = 0;
++  ofstream tracking(output_trajectory_csv + ".tracking.csv");
++  tracking << "timestamp,tracking_ok,imu_initialized" << endl;
+   for (int frame_idx=0; frame_idx < nImages; frame_idx++){
+-    double tframe = (double)frame_idx / fps;
++    double tframe = use_sensor_timestamps
++        ? camTimestamps[frame_idx] - camTimestamps.front()
++        : (double)frame_idx / fps;
+
+     // read frame from video
+     cv::Mat im,im_track;
+@@ -233,7 +260,8 @@ int main(int argc, char **argv) {
+     // gather imu measurements between frames
+     // Load imu measurements from previous frame
+     vImuMeas.clear();
+-    while(imuTimestamps[last_imu_idx] <= tframe && tframe > 0)
++    while(last_imu_idx < imuTimestamps.size() &&
++          imuTimestamps[last_imu_idx] <= tframe && tframe > 0)
+     {
+         vImuMeas.push_back(ORB_SLAM3::IMU::Point(vAcc[last_imu_idx].x,vAcc[last_imu_idx].y,vAcc[last_imu_idx].z,
+                                                   vGyr[last_imu_idx].x,vGyr[last_imu_idx].y,vGyr[last_imu_idx].z,
+@@ -246,6 +274,8 @@ int main(int argc, char **argv) {
+
+     // Pass the image to the SLAM system
+     auto result = SLAM.LocalizeMonocular(im_track, tframe, vImuMeas);
++    tracking << setprecision(9) << tframe << "," << result.second << ","
++             << SLAM.SensorImuInitialized() << endl;
+
+     // check lost frames
+     if (! result.second){
+diff --git a/include/CameraModels/Pinhole.h b/include/CameraModels/Pinhole.h
+index 3d86ca813..c8e50a868 100644
+--- a/include/CameraModels/Pinhole.h
++++ b/include/CameraModels/Pinhole.h
+@@ -88,7 +88,7 @@ namespace ORB_SLAM3 {
+             Sophus::SE3f &T21,
+             std::vector<cv::Point3f> &vP3D,
+             std::vector<bool> &vbTriangulated
+-        ){return false;}
++        );
+
+         cv::Mat toK();
+         Eigen::Matrix3f toK_();
+diff --git a/include/System.h b/include/System.h
+index 58c245dff..2324ef2cf 100644
+--- a/include/System.h
++++ b/include/System.h
+@@ -192,6 +192,7 @@ public:
+
+     // For debugging
+     double GetTimeFromIMUInit();
++    bool SensorImuInitialized();
+     bool isLost();
+     bool isFinished();
+
+diff --git a/src/CameraModels/Pinhole.cpp b/src/CameraModels/Pinhole.cpp
+index 816e4dc0f..a3a5564c2 100644
+--- a/src/CameraModels/Pinhole.cpp
++++ b/src/CameraModels/Pinhole.cpp
+@@ -19,6 +19,8 @@
+ #include "Pinhole.h"
+
+ #include <boost/serialization/export.hpp>
++#include <opencv2/aruco.hpp>
++#include "Converter.h"
+
+ //BOOST_CLASS_EXPORT_IMPLEMENT(ORB_SLAM3::Pinhole)
+
+@@ -90,6 +92,59 @@ namespace ORB_SLAM3 {
+         return tvr->Reconstruct(vKeys1,vKeys2,vMatches12,T21,vP3D,vbTriangulated);
+     }
+
++    bool Pinhole::ReconstructWithTwoViewsAndTags(
++            const std::vector<int>& markerIds1,
++            const std::vector<int>& markerIds2,
++            const std::vector<std::vector<cv::Point2f>>& markerCorners1,
++            const std::vector<std::vector<cv::Point2f>>& markerCorners2,
++            const std::vector<cv::KeyPoint>& vKeys1,
++            const std::vector<cv::KeyPoint>& vKeys2,
++            const std::vector<int>& vMatches12,
++            const int tag_id,
++            const float tag_size,
++            Sophus::SE3f& T21,
++            std::vector<cv::Point3f>& vP3D,
++            std::vector<bool>& vbTriangulated)
++    {
++        if(!tvr){
++            Eigen::Matrix3f K = this->toK_();
++            tvr = new TwoViewReconstruction(K);
++        }
++        vP3D.clear();
++        vbTriangulated.clear();
++
++        auto tag_iter1 = std::find(markerIds1.begin(), markerIds1.end(), tag_id);
++        auto tag_iter2 = std::find(markerIds2.begin(), markerIds2.end(), tag_id);
++        if(tag_iter1 == markerIds1.end() || tag_iter2 == markerIds2.end()){
++            return false;
++        }
++        const int tag_idx1 = static_cast<int>(tag_iter1 - markerIds1.begin());
++        const int tag_idx2 = static_cast<int>(tag_iter2 - markerIds2.begin());
++
++        const cv::Mat K = this->toK();
++        const cv::Mat distortion = cv::Mat::zeros(5, 1, CV_32F);
++        const std::vector<std::vector<cv::Point2f>> corners1{markerCorners1[tag_idx1]};
++        const std::vector<std::vector<cv::Point2f>> corners2{markerCorners2[tag_idx2]};
++        std::vector<cv::Vec3d> rvecs1, tvecs1, rvecs2, tvecs2;
++        cv::aruco::estimatePoseSingleMarkers(corners1, tag_size, K, distortion, rvecs1, tvecs1);
++        cv::aruco::estimatePoseSingleMarkers(corners2, tag_size, K, distortion, rvecs2, tvecs2);
++        if(rvecs1.empty() || rvecs2.empty() ||
++           !cv::checkRange(rvecs1[0]) || !cv::checkRange(tvecs1[0]) ||
++           !cv::checkRange(rvecs2[0]) || !cv::checkRange(tvecs2[0])){
++            return false;
++        }
++
++        cv::Mat R1w, R2w;
++        cv::Rodrigues(rvecs1[0], R1w);
++        cv::Rodrigues(rvecs2[0], R2w);
++        R1w.convertTo(R1w, CV_32F);
++        R2w.convertTo(R2w, CV_32F);
++        const Sophus::SE3f T1w(Converter::toMatrix3f(R1w), Converter::toVector3f(tvecs1[0]));
++        const Sophus::SE3f T2w(Converter::toMatrix3f(R2w), Converter::toVector3f(tvecs2[0]));
++        T21 = T2w * T1w.inverse();
++        return tvr->ReconstructWithTag(vKeys1, vKeys2, vMatches12, T21, vP3D, vbTriangulated);
++    }
++
+
+     cv::Mat Pinhole::toK() {
+         cv::Mat K = (cv::Mat_<float>(3, 3)
+diff --git a/src/System.cc b/src/System.cc
+index 15c28e263..c88fa966f 100644
+--- a/src/System.cc
++++ b/src/System.cc
+@@ -605,6 +605,10 @@ bool System::isShutDown() {
+     return mbShutDown;
+ }
+
++bool System::SensorImuInitialized() {
++    return mpAtlas->isImuInitialized();
++}
++
+ void System::SaveTrajectoryCSV(const string &filename)
+ {
+     cout << endl << "Saving camera trajectory to " << filename << " ..." << endl;
+diff --git a/src/Tracking.cc b/src/Tracking.cc
+index 2c2b4b785..f14685cbe 100644
+--- a/src/Tracking.cc
++++ b/src/Tracking.cc
+@@ -2173,17 +2173,7 @@ void Tracking::MonocularInitialization()
+         Sophus::SE3f Tcw;
+         vector<bool> vbTriangulated; // Triangulated Correspondences (mvIniMatches)
+
+-        bool reconstruct_success = mpCamera->ReconstructWithTwoViews(
+-            mInitialFrame.mvKeysUn,
+-            mCurrentFrame.mvKeysUn,
+-            mvIniMatches,
+-            Tcw,
+-            mvIniP3D,
+-            vbTriangulated
+-        );
+-        std::cout << "init_success=" << reconstruct_success << endl;
+-        if (!reconstruct_success) {
+-            reconstruct_success = mpCamera->ReconstructWithTwoViewsAndTags(
++        bool reconstruct_success = mpCamera->ReconstructWithTwoViewsAndTags(
+                 mInitialFrame.markerIds,
+                 mCurrentFrame.markerIds,
+                 mInitialFrame.markerCorners,
+@@ -2197,7 +2187,17 @@ void Tracking::MonocularInitialization()
+                 mvIniP3D,
+                 vbTriangulated
+             );
+-            std::cout << " tag_init_success=" << reconstruct_success << endl;
++        std::cout << "tag_init_success=" << reconstruct_success << endl;
++        if (!reconstruct_success) {
++            reconstruct_success = mpCamera->ReconstructWithTwoViews(
++                mInitialFrame.mvKeysUn,
++                mCurrentFrame.mvKeysUn,
++                mvIniMatches,
++                Tcw,
++                mvIniP3D,
++                vbTriangulated
++            );
++            std::cout << " init_success=" << reconstruct_success << endl;
+         }
+
+         if (reconstruct_success) {

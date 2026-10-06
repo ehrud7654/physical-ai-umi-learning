@@ -1,0 +1,17 @@
+{
+  "schema_version": 1,
+  "purpose": "Image regions occupied by the UMI handle in the upright_v1 S22 ultra-wide frame; masked before ORB extraction.",
+  "image_orientation_contract": "upright_v1",
+  "source": "HW handoff 2026-09-18; measured on 2026-09-17 collector frames",
+  "note": "Keep this tight. The earlier 43% mask starved ORB-SLAM3 of near-field table features.",
+  "regions": [
+    {
+      "name": "handle_body",
+      "polygon_xy_fraction": [[0.0, 0.76], [1.0, 0.76], [1.0, 1.0], [0.0, 1.0]]
+    },
+    {
+      "name": "finger_sweep",
+      "polygon_xy_fraction": [[0.22, 0.56], [0.78, 0.56], [0.80, 0.78], [0.20, 0.78]]
+    }
+  ]
+}

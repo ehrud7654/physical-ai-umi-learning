@@ -1,0 +1,21 @@
+# Diagnostic action-chunk BC for the provisional camera-centric UMI dataset.
+# This is a baseline before ACT/Diffusion, not a deployment configuration.
+model:
+  encoder_channels: [32, 64, 128, 256]
+  feature_dim: 256
+  hidden_dims: [512, 512]
+  dropout: 0.1
+
+train:
+  epochs: 30
+  batch_size: 32
+  lr: 0.0003
+  weight_decay: 0.0001
+  val_fraction: 0.2
+  seed: 0
+  grad_clip: 1.0
+  num_workers: 0
+
+data:
+  image_mean: 0.5
+  image_std: 0.5

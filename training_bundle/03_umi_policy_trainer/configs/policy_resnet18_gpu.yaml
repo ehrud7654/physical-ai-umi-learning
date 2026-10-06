@@ -1,0 +1,24 @@
+# Same ResNet18-from-scratch policy as policy_resnet18_8gb.yaml, sized for a server GPU (>=16 GB).
+# Effective batch 32 in one step, dataloader workers on; everything else identical.
+policy_frequency_hz: 10
+hydra_overrides:
+  - policy.obs_encoder.model_name=resnet18
+  - policy.obs_encoder.pretrained=false
+  - policy.obs_encoder.feature_aggregation=avg
+  - policy.down_dims=[128,256,512]
+  - dataloader.batch_size=32
+  - dataloader.num_workers=8
+  - dataloader.persistent_workers=true
+  - val_dataloader.batch_size=32
+  - val_dataloader.num_workers=4
+  - val_dataloader.persistent_workers=false
+  - training.gradient_accumulate_every=1
+  - training.num_epochs=120
+  - training.lr_warmup_steps=100
+  - training.checkpoint_every=1
+  - training.sample_every=5
+  - checkpoint.topk.k=3
+  - logging.mode=disabled
+  - task.dataset.val_ratio=0.15
+  - task.dataset.action_padding=true
+  - +task.dataset.val_start_pose_noise_scale=0.0

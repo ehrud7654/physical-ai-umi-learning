@@ -1,0 +1,28 @@
+{
+  "schema_version": 1,
+  "status": "cad_estimate_axis_mapping_unvalidated",
+  "convention": "T_A_B maps B column vectors into A; metres",
+  "source": "HW handoff 2026-09-18, s22_camera_estimate_v005.json lenses.ultrawide.T_lens_tcp",
+  "image_orientation_contract": "upright_v1",
+  "axis_mapping_assumption": "The saved OpenCV camera frame is the CAD lens frame rotated 180 degrees about optical Z",
+  "T_camera_lens": [
+    [-1.0, 0.0, 0.0, 0.0],
+    [0.0, -1.0, 0.0, 0.0],
+    [0.0, 0.0, 1.0, 0.0],
+    [0.0, 0.0, 0.0, 1.0]
+  ],
+  "T_lens_tcp": [
+    [-8.124766281980556e-08, 0.9659259915351868, 0.2588188946247101, -0.024311400949954987],
+    [-1.0, 4.3612807592782743e-13, -3.139166722121445e-07, -0.014750046655535698],
+    [-3.032203039765591e-07, -0.2588188946247101, 0.9659259915351868, 0.17365705966949463],
+    [0.0, 0.0, 0.0, 1.0]
+  ],
+  "T_camera_tcp": [
+    [8.124766281980556e-08, -0.9659259915351868, -0.2588188946247101, 0.024311400949954987],
+    [1.0, -4.3612807592782743e-13, 3.139166722121445e-07, 0.014750046655535698],
+    [-3.032203039765591e-07, -0.2588188946247101, 0.9659259915351868, 0.17365705966949463],
+    [0.0, 0.0, 0.0, 1.0]
+  ],
+  "physical_deployment_allowed": false,
+  "limitation": "CAD lens location, entrance pupil depth, and saved-image axis mapping have not been physically measured"
+}

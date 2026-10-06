@@ -1,0 +1,24 @@
+{
+  "schema": "umi_gripper_phase_guard/0.1.0",
+  "status": "diagnostic_not_hardware_approved",
+  "source_dataset": "onsite260921_C_ours_va / pv_E",
+  "command_gap_range_m": [0.0, 0.09],
+  "observation_gap_range_m": [0.0, 0.095],
+  "pregrasp_open_m": 0.078971848,
+  "close_threshold_m": 0.05,
+  "close_confirmation_cycles": 2,
+  "close_offset_m": 0.0013778322,
+  "reopen_threshold_m": 0.06,
+  "task_mode": "pick_hold",
+  "provenance": {
+    "pregrasp_open_m": "9/21 gripper_report overall maximum and pv_E action upper support",
+    "close_threshold_m": "diagnostic boundary above the 45.8 mm demonstrated grasp median; must be revalidated before hardware use",
+    "close_offset_m": "25 ticks * 0.09 m / (1763 - 130)",
+    "task_mode": "the current target is pick-and-lift without a release phase"
+  },
+  "limitations": [
+    "This sidecar is for offline replay and prediction-only checks until HW approves the real execution gates.",
+    "A dataset with a different gripper range, object width, or release phase requires a new sidecar.",
+    "This guard does not repair a policy that fails to approach a displaced object."
+  ]
+}

@@ -1,0 +1,29 @@
+{
+  "schema_version": 1,
+  "status": "validated_with_user_measurements",
+  "source_session": "rec_1789548048344_640a4bbc",
+  "dictionary": "DICT_4X4_50",
+  "marker_side_mm": 16.0,
+  "closed_marker_center_mm": 36.0,
+  "raw_closed_marker_center_mm": 37.98304022694138,
+  "correction_model": "actual_center_mm = raw_center_mm + center_offset_mm; gap_mm = raw_center_mm - raw_closed_marker_center_mm",
+  "center_offset_mm": -1.98304022694138,
+  "camera_calibration": "configs/calibration/s22_camera_imu.json",
+  "mounting_requirement": "Valid only while the phone and both marker mounts remain unchanged",
+  "validation": [
+    {
+      "session": "rec_example",
+      "user_gap_mm": 62.0,
+      "measured_gap_median_mm": 62.072126472635766,
+      "error_mm": 0.07212647263576599
+    },
+    {
+      "session": "rec_1789553430568_6eb2fdcb",
+      "user_gap_mm": 30.0,
+      "measured_gap_median_mm": 29.839300409474227,
+      "error_mm": -0.16069959052577332
+    }
+  ],
+  "validation_opencv_version": "4.11.0",
+  "limitation": "The 36, 62, and 30 mm values are user measurements"
+}

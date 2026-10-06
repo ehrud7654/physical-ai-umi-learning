@@ -1,0 +1,17 @@
+{
+  "schema": "physical_object_measurement/0.1.0",
+  "status": "USER_REPORTED_SINGLE_VALUE_METHOD_UNRECORDED",
+  "object_type": "baked_potato_snack_case",
+  "measurement_date": "2026-09-16",
+  "quantity": "body_width_along_gripper_closing_axis",
+  "value_m": 0.040,
+  "source": "user statement in the active Codex task",
+  "measurement_method": null,
+  "measurement_repetitions": null,
+  "use": "MuJoCo snack-case grasp-axis width for policy-free recorded-oracle diagnostics",
+  "limitations": [
+    "This records only the grasp-axis body width; it does not measure depth or height.",
+    "The measurement tool, location on the body and repeatability were not supplied.",
+    "This value does not calibrate the SO-101 command-to-pad-gap relation."
+  ]
+}

@@ -1,0 +1,169 @@
+{
+  "schema": "s22_mujoco_visual_domain/0.1.0-provisional",
+  "status": "VISUAL_DOMAIN_PROXY_NOT_HARDWARE_CALIBRATION",
+  "source_dataset": "umi_real_relative_20260911_v10",
+  "source_registration": "out/relative_chunk_v9_width40mm_preload2mm_lookback4_fixedstart_20260916.json",
+  "fit_report": "out/s22_mujoco_visual_alignment_proxy123_refined_20260917/s22_mujoco_visual_alignment.json",
+  "render_refinement_report": "out/s22_mujoco_render_alignment_proxy123_20260917.json",
+  "camera": {
+    "name": "cam_wrist",
+    "pos": [
+      0.14178498065602335,
+      -0.06444652438577446,
+      0.07656238968028864
+    ],
+    "xyaxes": [
+      0.010467061653725362,
+      -0.9573374424085369,
+      -0.28878272452315823,
+      0.9378111321531449,
+      0.10961351540730707,
+      -0.3293860313517997
+    ],
+    "fovy": 41.75346037272237
+  },
+  "appearance": {
+    "object_rgba": [0.95, 0.72, 0.06, 0.0],
+    "table_rgba": [0.82, 0.81, 0.77, 1.0],
+    "floor_rgba": [0.52, 0.56, 0.60, 1.0],
+    "light_diffuse_rgb": [0.82, 0.82, 0.82],
+    "visual_geometry": [
+      {
+        "name": "snack_package_image_derived_proxy",
+        "parent": "target_object",
+        "type": "box",
+        "pos_m": [0.0, 0.0, 0.02315],
+        "size_m": [0.020, 0.020, 0.0615],
+        "rgba": [0.95, 0.72, 0.06, 1.0]
+      },
+      {
+        "name": "snack_detail_x_positive",
+        "parent": "target_object",
+        "type": "box",
+        "pos_m": [0.0204, 0.0, 0.002],
+        "size_m": [0.0003, 0.012, 0.015],
+        "rgba": [0.90, 0.25, 0.04, 1.0]
+      },
+      {
+        "name": "snack_detail_x_negative",
+        "parent": "target_object",
+        "type": "box",
+        "pos_m": [-0.0204, 0.0, 0.002],
+        "size_m": [0.0003, 0.012, 0.015],
+        "rgba": [0.90, 0.25, 0.04, 1.0]
+      },
+      {
+        "name": "snack_detail_y_positive",
+        "parent": "target_object",
+        "type": "box",
+        "pos_m": [0.0, 0.0204, 0.002],
+        "size_m": [0.012, 0.0003, 0.015],
+        "rgba": [0.90, 0.25, 0.04, 1.0]
+      },
+      {
+        "name": "snack_detail_y_negative",
+        "parent": "target_object",
+        "type": "box",
+        "pos_m": [0.0, -0.0204, 0.002],
+        "size_m": [0.012, 0.0003, 0.015],
+        "rgba": [0.90, 0.25, 0.04, 1.0]
+      },
+      {
+        "name": "workspace_cup_proxy",
+        "parent": "world",
+        "type": "cylinder",
+        "pos_m": [0.40, 0.18, 0.050],
+        "size_m": [0.026, 0.050],
+        "rgba": [0.20, 0.23, 0.25, 1.0]
+      },
+      {
+        "name": "workspace_phone_proxy",
+        "parent": "world",
+        "type": "box",
+        "pos_m": [0.46, -0.11, 0.008],
+        "size_m": [0.060, 0.035, 0.008],
+        "rgba": [0.08, 0.09, 0.11, 1.0]
+      },
+      {
+        "name": "workspace_container_proxy",
+        "parent": "world",
+        "type": "box",
+        "pos_m": [0.32, 0.13, 0.050],
+        "size_m": [0.035, 0.030, 0.050],
+        "rgba": [0.72, 0.80, 0.86, 1.0]
+      },
+      {
+        "name": "workspace_bright_backdrop",
+        "parent": "world",
+        "type": "box",
+        "pos_m": [0.56, 0.0, 0.16],
+        "size_m": [0.006, 0.40, 0.16],
+        "rgba": [0.56, 0.52, 0.48, 1.0]
+      },
+      {
+        "name": "workspace_backdrop_dark_patch",
+        "parent": "world",
+        "type": "box",
+        "pos_m": [0.553, 0.16, 0.12],
+        "size_m": [0.002, 0.050, 0.085],
+        "rgba": [0.18, 0.20, 0.22, 1.0]
+      },
+      {
+        "name": "workspace_backdrop_light_patch",
+        "parent": "world",
+        "type": "box",
+        "pos_m": [0.553, -0.14, 0.10],
+        "size_m": [0.002, 0.055, 0.070],
+        "rgba": [0.86, 0.83, 0.78, 1.0]
+      }
+    ]
+  },
+  "training_randomization": {
+    "status": "provisional_ranges_for_sim_pretraining_only",
+    "camera_position_half_width_m": 0.005,
+    "camera_rotation_half_width_deg": 2.0,
+    "rgba_jitter": 0.12,
+    "light_position_half_width_m": 0.10,
+    "light_diffuse_half_width": 0.12,
+    "note": "Do not apply these perturbations to real v10 fine-tuning images."
+  },
+  "evidence": {
+    "episodes_total": 8,
+    "fit_episodes": 6,
+    "holdout_episodes": 2,
+    "holdout_bbox_loss_before": 0.9531083566819726,
+    "holdout_bbox_loss_after": 0.010260369010486185,
+    "visible_object_ray_fraction": 1.0,
+    "visible_object_rays": "40/40",
+    "world_up_screen_error_deg_median_p95": [
+      2.1889879475920875,
+      2.1889879475920875
+    ],
+    "real_bbox_centre_xy_median": [
+      0.5122767857142858,
+      0.6238839285714286
+    ],
+    "sim_bbox_centre_xy_median": [
+      0.5133928571428571,
+      0.6160714285714286
+    ],
+    "real_bbox_size_wh_median": [
+      0.2299107142857143,
+      0.6272321428571428
+    ],
+    "sim_bbox_size_wh_median": [
+      0.25892857142857145,
+      0.6026785714285714
+    ],
+    "physical_object_size_m": [0.04, 0.04, 0.0767],
+    "image_derived_visual_proxy_size_m": [0.04, 0.04, 0.123],
+    "image_derived_visual_proxy_basis": "40 mm measured grasp width scaled by median real/S22 versus provisional-box bbox aspect ratio"
+  },
+  "limitations": [
+    "The camera was fitted to real image framing and is not a measured IMX708 optical extrinsic.",
+    "The real object bbox is a yellow/orange HSV component, not a manual full-object annotation.",
+    "The 123 mm visible package height is image-derived, not a caliper measurement; physical collision remains 76.7 mm provisional geometry.",
+    "The MuJoCo package details and workspace clutter are render-only primitive proxies, not measured meshes or textures.",
+    "This config may be used for simulation visual-domain experiments only."
+  ]
+}

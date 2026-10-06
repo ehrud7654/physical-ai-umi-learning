@@ -1,0 +1,41 @@
+--- a/diffusion_policy/dataset/umi_dataset.py
++++ b/diffusion_policy/dataset/umi_dataset.py
+@@ -37,7 +37,9 @@
+         repeat_frame_prob: float=0.0,
+         seed: int=42,
+         val_ratio: float=0.0,
+-        max_duration: Optional[float]=None
++        max_duration: Optional[float]=None,
++        start_pose_noise_scale: float=0.05,
++        val_start_pose_noise_scale: float=0.05
+     ):
+         self.pose_repr = pose_repr
+         self.obs_pose_repr = self.pose_repr.get('obs_pose_repr', 'rel')
+@@ -167,6 +169,9 @@
+         self.action_padding = action_padding
+         self.repeat_frame_prob = repeat_frame_prob
+         self.max_duration = max_duration
++        # Local patch: episode-start pose noise is configurable; upstream default kept.
++        self.start_pose_noise_scale = start_pose_noise_scale
++        self.val_start_pose_noise_scale = val_start_pose_noise_scale
+         self.sampler = sampler
+         self.temporally_independent_normalization = temporally_independent_normalization
+         self.threadpool_limits_is_applied = False
+@@ -188,6 +193,7 @@
+             max_duration=self.max_duration
+         )
+         val_set.val_mask = ~self.val_mask
++        val_set.start_pose_noise_scale = self.val_start_pose_noise_scale
+         return val_set
+     
+     def get_normalizer(self, **kwargs) -> LinearNormalizer:
+@@ -311,7 +317,8 @@
+             # get start pose
+             start_pose = obs_dict[f'robot{robot_id}_demo_start_pose'][0]
+             # HACK: add noise to episode start pose
+-            start_pose += np.random.normal(scale=[0.05,0.05,0.05,0.05,0.05,0.05],size=start_pose.shape)
++            if self.start_pose_noise_scale > 0:
++                start_pose += np.random.normal(scale=self.start_pose_noise_scale,size=start_pose.shape)
+             start_pose_mat = pose_to_mat(start_pose)
+             rel_obs_pose_mat = convert_pose_mat_rep(
+                 pose_mat,

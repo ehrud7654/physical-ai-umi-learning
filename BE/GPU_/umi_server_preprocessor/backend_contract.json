@@ -1,0 +1,50 @@
+{
+  "schema": "orbslam_atlas_backend_handoff/0.1.0",
+  "created_date": "2026-09-23",
+  "marker": {
+    "dictionary": "DICT_4X4_50",
+    "id": 13,
+    "black_square_size_m": 0.16
+  },
+  "orbslam": {
+    "source_commit": "b741dca39015330ef4bcc3a85f89493503ade04b",
+    "verified_binary_sha256": "9ac6980e99221b8255b7b9cf1f6d274bd0fd74e746a6033c4ef8dc822218d6cb",
+    "required_flags": [
+      "--use_sensor_timestamps",
+      "--save_map",
+      "--load_map",
+      "--mask_img",
+      "--init_tag_id",
+      "--init_tag_size"
+    ],
+    "diagnostic_optional_flags": ["--localization_only"],
+    "mapping_mode": ["--save_map"],
+    "demonstration_mode": ["--load_map"],
+    "demonstration_process_isolation": "fresh process and immutable Atlas reload for every episode",
+    "demonstration_allows_local_mapping": true,
+    "demonstration_save_map": false
+  },
+  "selection_gate": {
+    "minimum_coverage": 0.95,
+    "maximum_first_pose_time_s": 0.5,
+    "maximum_timestamp_error_ms": 2.0,
+    "tracking_loss_after_initialization_allowed": false,
+    "final_frame_must_be_tracked": true,
+    "maximum_gripper_missing_run_frames": 15
+  },
+  "required_outputs": [
+    "map_atlas.osa",
+    "mapping/camera_trajectory.csv",
+    "aruco_alignment.json",
+    "episodes/<episode>/attemptN/camera_trajectory.csv",
+    "atlas_selection.json",
+    "episode_gate_report.json",
+    "episode_gate_report.csv",
+    "job_provenance.json"
+  ],
+  "publication_gate": {
+    "pose_continuity": "REQUIRED_BUT_NOT_YET_CLOSED",
+    "physical_deployment": false,
+    "notes": "state=2/is_lost=false alone is insufficient; fail closed on discontinuous relocalization jumps"
+  }
+}

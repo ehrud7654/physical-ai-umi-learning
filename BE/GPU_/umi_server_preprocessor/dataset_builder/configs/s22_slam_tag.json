@@ -1,0 +1,13 @@
+{
+  "schema_version": 1,
+  "purpose": "Table marker that defines the shared world frame of one mapping session (Stanford UMI convention).",
+  "dictionary": "DICT_4X4_50",
+  "tag_id": 13,
+  "tag_size_m": 0.16,
+  "source": "https://umi-gripper.github.io/share/table_marker.pdf printed at 100% scale; measure one black edge = 160 mm",
+  "minimum_detections": 20,
+  "maximum_distance_m": 2.0,
+  "maximum_center_offset_ratio": 0.7,
+  "inlier_radius_m": 0.05,
+  "note": "The ChArUco calibration board also contains an 18 mm ID 13; keep it out of view during mapping and demonstrations."
+}

@@ -1,0 +1,80 @@
+openapi: 3.0.3
+info:
+  title: UMI Preprocessor Internal API
+  version: 1.1.0
+paths:
+  /health:
+    get:
+      responses:
+        "200":
+          description: Healthy
+  /internal/v1/jobs:
+    post:
+      summary: Start one preprocessing job
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/JobRequest"
+      responses:
+        "202":
+          description: Accepted
+        "400":
+          description: Invalid input or missing RAW directory
+        "409":
+          description: Another job is running
+  /internal/v1/jobs/{jobId}:
+    get:
+      summary: Read persisted job status
+      parameters:
+        - in: path
+          name: jobId
+          required: true
+          schema: {type: string, pattern: "^[A-Za-z0-9][A-Za-z0-9_-]{0,63}$"}
+      responses:
+        "200": {description: Current status}
+        "404": {description: Job not found}
+  /internal/v1/jobs/{jobId}/cancel:
+    post:
+      summary: Stop the active job process group
+      parameters:
+        - in: path
+          name: jobId
+          required: true
+          schema: {type: string}
+      responses:
+        "204": {description: Cancelled}
+        "409": {description: Job is not running}
+components:
+  schemas:
+    JobRequest:
+      type: object
+      required: [job_id, demonstration_session_ids]
+      properties:
+        job_id: {type: string, pattern: "^[A-Za-z0-9][A-Za-z0-9_-]{0,63}$"}
+        dataset_name: {type: string, default: dataset}
+        calibration_profile: {type: string, default: s22_20260921}
+        require_mapping: {type: boolean, default: true}
+        mapping_session_id:
+          type: string
+          description: Exact folder name under raw_mapping/. Never infer this from outcome, duration, filename order, or upload order.
+        demonstration_session_ids:
+          type: array
+          minItems: 1
+          uniqueItems: true
+          items: {type: string, pattern: "^[A-Za-z0-9][A-Za-z0-9_-]{0,63}$"}
+        external_atlas_path:
+          type: string
+          description: Job-root-relative map_atlas.osa path; alternative to mapping_session_id.
+        external_alignment_path:
+          type: string
+          description: Job-root-relative tx_slam_tag.json path paired with external_atlas_path.
+        external_atlas_sha256: {type: string, pattern: "^[0-9a-fA-F]{64}$"}
+        external_alignment_sha256: {type: string, pattern: "^[0-9a-fA-F]{64}$"}
+      description: >-
+        The job must have exactly one Mapping source: a mapping_session_id (or exactly one explicitly
+        staged raw_mapping folder) or an external Atlas plus alignment and SHA-256 provenance.
+        A Mapping manifest may be outcome=unrated. Demonstrations remain training candidates only
+        when outcome=success. ArUco 13 is mandatory for Mapping alignment but demonstration-time
+        visibility is diagnostic, not a training gate.
